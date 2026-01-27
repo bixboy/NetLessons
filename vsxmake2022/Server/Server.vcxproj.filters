@@ -18,6 +18,12 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="src\Server">
       <UniqueIdentifier>{1963D879-1842-4CD6-B94E-A0348157E78F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Server\private">
+      <UniqueIdentifier>{2E6AAB25-A0E0-4690-B5BB-30E6CB2EEA41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Server\public">
+      <UniqueIdentifier>{61FC0B54-956B-4984-AFD1-A061C11B889B}</UniqueIdentifier>
+    </Filter>
 
   </ItemGroup>
   <ItemGroup>
@@ -38,13 +44,19 @@ xmake version 3.0.4+master.b703ec328
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\GameServer.h">
+      <Filter>src\Server\public</Filter>
+    </ClInclude>
 
 
   </ItemGroup>
   <ItemGroup>
 
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\main.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\ServerMain.cpp">
       <Filter>src\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\GameServer.cpp">
+      <Filter>src\Server\private</Filter>
     </ClCompile>
 
 

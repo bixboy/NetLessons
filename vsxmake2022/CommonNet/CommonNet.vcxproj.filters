@@ -12,6 +12,12 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="Properties">
       <UniqueIdentifier>{CC7C6180-942D-056E-3227-E6A2B3FB19CD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{491FBF00-292E-479F-8C8F-7A2AC045023A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\CommonNet">
+      <UniqueIdentifier>{2A50D7BA-DCCA-4459-8474-48B9D868C61C}</UniqueIdentifier>
+    </Filter>
 
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +38,9 @@ xmake version 3.0.4+master.b703ec328
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(XmakeProjectDir)\src\CommonNet\NetworkCommon.h">
+      <Filter>src\CommonNet</Filter>
+    </ClInclude>
 
 
   </ItemGroup>

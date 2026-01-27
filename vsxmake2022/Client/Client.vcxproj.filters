@@ -18,6 +18,12 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="src\Client">
       <UniqueIdentifier>{4CE25195-36D8-4E71-9CCC-D0B7CEC0C62F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Client\private">
+      <UniqueIdentifier>{8EBE9537-36F7-4CAF-A2E9-8712D1862FDA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\public">
+      <UniqueIdentifier>{CCBF80BF-ACB3-43D7-B493-06FEAFD58E9B}</UniqueIdentifier>
+    </Filter>
 
   </ItemGroup>
   <ItemGroup>
@@ -38,13 +44,19 @@ xmake version 3.0.4+master.b703ec328
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\GameClient.h">
+      <Filter>src\Client\public</Filter>
+    </ClInclude>
 
 
   </ItemGroup>
   <ItemGroup>
 
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\main.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\ClienMain.cpp">
       <Filter>src\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\GameClient.cpp">
+      <Filter>src\Client\private</Filter>
     </ClCompile>
 
 
