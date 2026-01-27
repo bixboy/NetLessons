@@ -51,7 +51,7 @@ void GameClient::Run()
     m_window.create(sf::VideoMode({800, 600}), "Le Juste Prix - Network");
     m_window.setFramerateLimit(60);
 
-    if (!m_font.openFromFile("arial.ttf"))
+    if (!m_font.openFromFile("assets/arial.ttf"))
     {
         std::cerr << "ERREUR: arial.ttf manquant !" << std::endl;
     }
@@ -109,31 +109,31 @@ void GameClient::Run()
 
 void GameClient::InitSounds()
 {
-    if (m_bufferSelect.loadFromFile("ClickButton.mp3"))
+    if (m_bufferSelect.loadFromFile("assets/Sounds/ClickButton.mp3"))
     {
         m_soundSelect.setBuffer(m_bufferSelect);
         m_soundSelect.setVolume(70.f);
     }
 
     // Win / Lose Sounds
-    if (m_bufferWin.loadFromFile("Win.mp3"))
+    if (m_bufferWin.loadFromFile("assets/Sounds/Win.mp3"))
     {
         m_soundWin.setBuffer(m_bufferWin);
         m_soundWin.setVolume(70.f);
     }
-    if (m_bufferLose.loadFromFile("Lose.mp3"))
+    if (m_bufferLose.loadFromFile("assets/Sounds/Lose.mp3"))
     {
         m_soundLose.setBuffer(m_bufferLose);
         m_soundLose.setVolume(200.f);
     }
 
     // Join / Leave Sounds
-    if (m_bufferJoin.loadFromFile("Join.mp3"))
+    if (m_bufferJoin.loadFromFile("assets/Sounds/Join.mp3"))
     {
         m_soundJoin.setBuffer(m_bufferJoin);
         m_soundJoin.setVolume(70.f);
     }
-    if (m_bufferLeave.loadFromFile("Leave.mp3"))
+    if (m_bufferLeave.loadFromFile("assets/Sounds/Leave.mp3"))
     {
         m_soundLeave.setBuffer(m_bufferLeave);
         m_soundLeave.setVolume(70.f);

@@ -3,8 +3,14 @@ add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 add_requires("sfml 3.0.1")
 
+if is_plat("windows") then
+    add_syslinks("ole32") 
+end
+
 target("CommonNet")
     set_kind("static")
+    on_install(function (target) end)
+    
     add_headerfiles("src/CommonNet/**.h")
     add_includedirs("src/CommonNet", {public = true})
     
@@ -28,10 +34,16 @@ target("Client")
     add_headerfiles("src/Client/**.h")
     
     if is_plat("windows") then
-        add_ldflags("/SUBSYSTEM:WINDOWS", "/ENTRY:mainCRTStartup")
-        add_syslinks("ole32")
+        add_ldflags("/SUBSYSTEM:WINDOWS", "/ENTRY:mainCRTStartup", {force = true})
     end
     
     after_build(function (target)
-        os.cp("resources/**", target:targetdir())
+        local dest_dir = path.join(target:targetdir(), "assets")
+        if not os.exists(dest_dir) then
+            os.mkdir(dest_dir)
+        end
+                
+        os.cp("resources/*", dest_dir)
     end)
+
+    add_installfiles("resources/**", {prefixdir = "assets"})
