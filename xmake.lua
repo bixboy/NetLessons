@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-set_languages("c++17")
+set_languages("c++20")
 add_requires("sfml 3.0.1")
 
 if is_plat("windows") then

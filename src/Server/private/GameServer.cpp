@@ -1,191 +1,229 @@
 ﻿#include "../public/GameServer.h"
 #include <iostream>
+#include <algorithm>
+#include <thread>
+#include <chrono>
+#include <fstream>
 
-
-GameServer::GameServer() : m_listener(INVALID_SOCKET), m_gameRunning(false), m_mysteryNumber(0)
+GameServer::GameServer() : m_gameRunning(false), m_mysteryNumber(0)
 {
-    FD_ZERO(&m_masterSet);
 }
 
 GameServer::~GameServer()
 {
-    WSACleanup();
 }
 
 bool GameServer::Initialize()
 {
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-    m_listener = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_listener == INVALID_SOCKET)
+    if (!m_network.Start(PORT))
+    {
         return false;
+    }
 
-    sockaddr_in serverAddr;
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(PORT);
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
+    auto handler = [this](GamePacket& pkt, const sockaddr_in& sender) {
+        HandlePacket(pkt, sender);
+    };
 
-    bind(m_listener, (sockaddr*)&serverAddr, sizeof(serverAddr));
-    listen(m_listener, SOMAXCONN);
-
-    FD_SET(m_listener, &m_masterSet);
+    m_network.OnPacket(PacketType::Connect, handler);
+    m_network.OnPacket(PacketType::Disconnect, handler);
+    m_network.OnPacket(PacketType::GameStart, handler);
+    m_network.OnPacket(PacketType::GameData, handler);
+    m_network.OnPacket(PacketType::Chat, handler);
+    m_network.OnPacket(PacketType::Ping, handler);
     
-    srand(static_cast<unsigned int>(time(nullptr)));
-    
-    std::cout << "Serveur initialise sur le port " << PORT << std::endl;
     return true;
 }
 
 void GameServer::Run()
 {
+    std::cout << "Server loop running..." << std::endl;
     while (true)
     {
-        fd_set copySet = m_masterSet;
-        int socketCount = select(0, &copySet, nullptr, nullptr, nullptr);
-
-        for (int i = 0; i < copySet.fd_count; i++)
+        m_network.PollEvents();
+        
+        auto now = std::chrono::steady_clock::now();
+        for (auto it = m_players.begin(); it != m_players.end(); )
         {
-            SOCKET sock = copySet.fd_array[i];
-            if (sock == m_listener)
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - it->lastPacketTime);
+            if (duration.count() > TIMEOUT_SECONDS)
             {
-                HandleNewConnection();
+                std::cout << "Timeout : " << it->pseudo << std::endl;
+                
+                GamePacket leavePkt;
+                leavePkt << (int)PacketType::Disconnect << it->pseudo;
+                Broadcast(leavePkt, &it->address);
+                
+                it = m_players.erase(it);
             }
             else
             {
-                HandleClientMessage(sock);
+                ++it;
             }
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
-void GameServer::HandleNewConnection()
+void GameServer::HandlePacket(GamePacket& pkt, const sockaddr_in& sender)
 {
-    SOCKET client = accept(m_listener, nullptr, nullptr);
-    FD_SET(client, &m_masterSet);
+    int typeInt = 0;
+    pkt >> typeInt; 
+    PacketType type = static_cast<PacketType>(typeInt);
 
-    PlayerInfo newPlayer;
-    newPlayer.socket = client;
-    newPlayer.pseudo = "Inconnu";
-    m_players.push_back(newPlayer);
+    PlayerInfo* player = GetPlayerByAddr(sender);
 
-    std::cout << "Nouveau joueur ! Total: " << m_players.size() << std::endl;
-}
-
-void GameServer::HandleClientMessage(SOCKET sock)
-{
-    Packet pkt;
-    int bytesIn = recv(sock, (char*)&pkt, BUFFER_SIZE, 0);
-
-    if (bytesIn <= 0)
+    if (player)
     {
-        RemoveClient(sock);
+        player->lastPacketTime = std::chrono::steady_clock::now();
+    }
+
+    // --- CONNEXION ---
+    if (type == PacketType::Connect)
+    {
+        std::string pseudo;
+        pkt >> pseudo;
+
+        if (!player)
+        {
+            PlayerInfo newP;
+            newP.address = sender;
+            newP.pseudo = pseudo;
+            newP.lastPacketTime = std::chrono::steady_clock::now();
+            
+            for (const auto& p : m_players)
+            {
+                GamePacket listPkt;
+                listPkt << (int)PacketType::Connect << p.pseudo;
+                
+                GamePacket existingPkt;
+                existingPkt << (int)PacketType::PlayerList << p.pseudo;
+                SendTo(sender, existingPkt);
+            }
+
+            m_players.push_back(newP);
+            player = &m_players.back();
+            std::cout << "Nouveau joueur : " << pseudo << std::endl;
+        }
+        else
+        {
+            player->pseudo = pseudo;
+        }
+
+        GamePacket joinPkt;
+        joinPkt << (int)PacketType::Connect << pseudo;
+        Broadcast(joinPkt, &sender);
         return;
     }
 
-    // --- Logique du Jeu ---
-    if (pkt.type == 3) // LOGIN
-    {
-        for (auto& p : m_players)
-        {
-            if (p.socket == sock)
-            {
-                p.pseudo = pkt.text;
-                std::cout << "Login: " << p.pseudo << std::endl;
+    if (!player) 
+        return;
 
-                Packet joinPkt{ 6, 0, "" };
-                strncpy(joinPkt.text, p.pseudo.c_str(), 31);
-                Broadcast(joinPkt, sock);
-                
-                break;
-            }
-        }
-    }
-    else if (pkt.type == 2 && !m_gameRunning) // START
+    // --- START GAME ---
+    if (type == PacketType::GameStart && !m_gameRunning)
     {
         m_gameRunning = true;
         m_mysteryNumber = rand() % 100;
-        std::cout << "Jeu Lance ! Nombre: " << m_mysteryNumber << std::endl;
+        std::cout << "Jeu Lance ! Mystere = " << m_mysteryNumber << std::endl;
         
-        Packet response{ 0, 5, "" };
-        Broadcast(response);
+        GamePacket startPkt;
+        startPkt << (int)PacketType::GameStart;
+        Broadcast(startPkt);
     }
-    else if (pkt.type == 1 && m_gameRunning) // JEU
+    // --- CHAT ---
+    else if (type == PacketType::Chat)
     {
-        Packet response{ 0, 0, "" };
+        std::string msg;
+        pkt >> msg;
+        
+        std::cout << "[CHAT] " << player->pseudo << ": " << msg << std::endl;
+        
+        GamePacket chatPkt;
+        chatPkt << (int)PacketType::Chat << (player->pseudo) << msg; 
+        
+        Broadcast(chatPkt);
+    }
+    // --- JEU ---
+    else if (type == PacketType::GameData && m_gameRunning)
+    {
+        int guess = 0;
+        pkt >> guess;
 
-        if (pkt.data < m_mysteryNumber)
+        GamePacket response;
+        
+        if (guess < m_mysteryNumber) // C'est PLUS
         {
-            response.data = 1; // Plus
+            response << (int)PacketType::GameData << 1;
+            SendTo(sender, response);
         }
-        else if (pkt.data > m_mysteryNumber)
+        else if (guess > m_mysteryNumber) // C'est MOINS
         {
-            response.data = 2; // Moins
+            response << (int)PacketType::GameData << 2;
+            SendTo(sender, response);
         }
-        else 
+        else // VICTOIRE
         {
-            response.data = 3; // Win
+            GamePacket winPkt;
+            winPkt << static_cast<int>(PacketType::Win);
+            SendTo(sender, winPkt);
+
+            GamePacket losePkt;
+            losePkt << static_cast<int>(PacketType::Lose) << player->pseudo;
+            Broadcast(losePkt, &sender);
+
             m_gameRunning = false;
         }
-
-        SendTo(sock, response);
-
-        if (response.data == 3)
-        {
-            std::string winnerName = "Inconnu";
-            for (auto& p : m_players) if (p.socket == sock) winnerName = p.pseudo;
-
-            Packet losePkt{ 0, 4, "" };
-            
-            strncpy(losePkt.text, winnerName.c_str(), 31);
-            Broadcast(losePkt, sock);
-        }
+    }
+    else if (type == PacketType::Disconnect)
+    {
+        RemovePlayer(sender);
     }
 }
 
-void GameServer::RemoveClient(SOCKET sock)
+PlayerInfo* GameServer::GetPlayerByAddr(const sockaddr_in& addr)
 {
-    auto it = std::find_if(m_players.begin(), m_players.end(), 
-        [sock](const PlayerInfo& p)
+    for (auto& p : m_players)
+    {
+        if (p.address.sin_addr.s_addr == addr.sin_addr.s_addr && p.address.sin_port == addr.sin_port)
         {
-            return p.socket == sock;
+            return &p;
+        }
+    }
+    
+    return nullptr;
+}
+
+void GameServer::RemovePlayer(const sockaddr_in& addr)
+{
+    auto it = std::find_if(m_players.begin(), m_players.end(), [&](const PlayerInfo& p) 
+        {
+            return p.address.sin_addr.s_addr == addr.sin_addr.s_addr && p.address.sin_port == addr.sin_port;
         });
 
     if (it != m_players.end())
     {
-        std::string leavingPseudo = it->pseudo;
-        std::cout << "Joueur deconnecte : " << leavingPseudo << std::endl;
-
-        if (leavingPseudo != "Inconnu" && !leavingPseudo.empty())
-        {
-            Packet leavePkt{ 7, 0, "" };
-            strncpy(leavePkt.text, leavingPseudo.c_str(), 31);
-            Broadcast(leavePkt, sock);
-        }
-
-        closesocket(sock);
-        FD_CLR(sock, &m_masterSet);
+        std::cout << "Deconnexion : " << it->pseudo << std::endl;
+        
+        GamePacket leavePkt;
+        leavePkt << (int)PacketType::Disconnect << it->pseudo;
+        Broadcast(leavePkt, &addr);
+        
         m_players.erase(it);
-    }
-    else
-    {
-        closesocket(sock);
-        FD_CLR(sock, &m_masterSet);
     }
 }
 
-void GameServer::Broadcast(Packet& pkt, SOCKET senderToIgnore)
+void GameServer::Broadcast(GamePacket& pkt, const sockaddr_in* senderToIgnore)
 {
     for (auto& p : m_players)
     {
-        if (p.socket != senderToIgnore)
-        {
-            send(p.socket, (char*)&pkt, BUFFER_SIZE, 0);
-        }
+        if (senderToIgnore != nullptr && p.address.sin_addr.s_addr == senderToIgnore->sin_addr.s_addr && p.address.sin_port == senderToIgnore->sin_port)
+            continue;
+        
+        SendTo(p.address, pkt);
     }
 }
 
-void GameServer::SendTo(SOCKET sock, Packet& pkt)
+void GameServer::SendTo(const sockaddr_in& target, GamePacket& pkt)
 {
-    send(sock, (char*)&pkt, BUFFER_SIZE, 0);
+    m_network.SendTo(pkt, target);
 }

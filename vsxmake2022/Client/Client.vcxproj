@@ -110,7 +110,9 @@ PYTHONPATH=C:\Users\PIERRE\AppData\Local\.xmake\packages\p\python\3.13.2\6faae9a
 
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
   <ItemGroup>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ChatBox.h" />
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\GameClient.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\NetworkClient.h" />
 
 
   </ItemGroup>
@@ -119,7 +121,13 @@ PYTHONPATH=C:\Users\PIERRE\AppData\Local\.xmake\packages\p\python\3.13.2\6faae9a
     <ClCompile Include="$(XmakeProjectDir)\src\Client\ClienMain.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\ChatBox.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\GameClient.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\NetworkClient.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
 

@@ -4,19 +4,23 @@
     <projectFile>Client/Client.vcxproj</projectFile>
     <projectFile>Server/Server.vcxproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="41070ad6-fe81-41cd-8a8e-2468a04038c8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../src/Client/ClienMain.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/ClienMain.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Client/public/GameClient.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/GameClient.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/CommonNet/NetworkCommon.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/CommonNet/NetworkCommon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/GameServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/GameServer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/GameServer.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/GameServer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/NetLessons.vcxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/NetLessons.vcxproj.filters" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/Xmake.Custom.items" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/Xmake.Custom.items.filters" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/Xmake.Custom.props" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons/Xmake.Custom.targets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj.filters" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NetLessons.sln" beforeDir="false" afterPath="$PROJECT_DIR$/NetLessons.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Server.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Server.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Server.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Server.vcxproj.filters" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../xmake.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../xmake.lua" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +38,7 @@
     <commands />
     <urls />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
@@ -43,25 +48,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ Project.Server.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ Project.Server.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ Project.Server">
     <configuration name="Client" type="CppProject" factoryName="C++ Project">
       <option name="DEFAULT_PROJECT_PATH" value="$PROJECT_DIR$/Client/Client.vcxproj" />
@@ -91,6 +96,18 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration default="true" type="GODOT_DEBUG_RUN_CONFIGURATION" factoryName="Start and Debug">
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
+      <method v="2">
+        <option name="Build Solution" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -100,13 +117,17 @@
       <option name="presentableId" value="Default" />
       <updated>1769524973700</updated>
       <workItem from="1769524975908" duration="36000" />
-      <workItem from="1769525040397" duration="303000" />
+      <workItem from="1769525040397" duration="704000" />
+      <workItem from="1769535583494" duration="7393000" />
+      <workItem from="1769554144474" duration="3676000" />
+      <workItem from="1769587550954" duration="10911000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />

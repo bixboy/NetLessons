@@ -44,7 +44,13 @@ xmake version 3.0.4+master.b703ec328
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ChatBox.h">
+      <Filter>src\Client\public</Filter>
+    </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\GameClient.h">
+      <Filter>src\Client\public</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\NetworkClient.h">
       <Filter>src\Client\public</Filter>
     </ClInclude>
 
@@ -55,7 +61,13 @@ xmake version 3.0.4+master.b703ec328
     <ClCompile Include="$(XmakeProjectDir)\src\Client\ClienMain.cpp">
       <Filter>src\Client</Filter>
     </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\ChatBox.cpp">
+      <Filter>src\Client\private</Filter>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\GameClient.cpp">
+      <Filter>src\Client\private</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\NetworkClient.cpp">
       <Filter>src\Client\private</Filter>
     </ClCompile>
 

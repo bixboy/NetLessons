@@ -1,13 +1,10 @@
-﻿#pragma once
-#include <string>
-#include <vector>
-#include "NetworkCommon.h"
-
+﻿#include "NetworkServer.h"
 
 struct PlayerInfo
 {
-    SOCKET socket;
+    sockaddr_in address;
     std::string pseudo;
+    std::chrono::steady_clock::time_point lastPacketTime;
 };
 
 class GameServer
@@ -20,14 +17,16 @@ public:
     void Run();
 
 private:
-    void HandleNewConnection();
-    void HandleClientMessage(SOCKET sock);
-    void RemoveClient(SOCKET sock);
-    void Broadcast(Packet& pkt, SOCKET senderToIgnore = INVALID_SOCKET);
-    void SendTo(SOCKET sock, Packet& pkt);
+    void HandlePacket(GamePacket& pkt, const sockaddr_in& sender);
+    
+    PlayerInfo* GetPlayerByAddr(const sockaddr_in& addr);
+    
+    void RemovePlayer(const sockaddr_in& addr);
+    void Broadcast(GamePacket& pkt, const sockaddr_in* senderToIgnore = nullptr);
+    void SendTo(const sockaddr_in& target, GamePacket& pkt);
 
-    SOCKET m_listener;
-    fd_set m_masterSet;
+    NetworkServer m_network;
+    
     std::vector<PlayerInfo> m_players;
 
     bool m_gameRunning;

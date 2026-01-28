@@ -1,12 +1,15 @@
 ﻿#pragma once
-#include "NetworkCommon.h"
+#include "NetworkClient.h"
+#include "ChatBox.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <string>
 #include <atomic>
+#include <mutex>
 
 enum class ClientState
 {
+    IpConfig,
     Login,
     Lobby,
     Game,
@@ -19,26 +22,33 @@ public:
     GameClient();
     ~GameClient();
 
-    bool Connect(const std::string& ip);
     void Run();
 
 private:
     // --- Réseau ---
-    void ReceiveLoop();
-    void SendPacket(Packet& pkt);
-
+    void SetupNetworkHandlers();
+    
     // --- Inputs ---
     void HandleInput(const sf::Event& event);
+    void HandleIpInput(const sf::Event& event);
     void HandleLoginInput(const sf::Event& event);
     void HandleGameInput(sf::Keyboard::Key key);
-
+    
+    
     // --- Affichage ---
+    void DrawIpConfig();
     void DrawLogin();
     void DrawLobby();
     void DrawGame();
     void DrawResult();
 
     void CenterText(sf::Text& text, float y, int fontSize);
+    
+    // UI Helpers
+    void DrawBackground();
+    void DrawPanel(float x, float y, float w, float h, sf::Color color);
+    void DrawButton(const std::string& text, float y, bool active = false);
+    void DrawInputBox(const std::string& label, const std::string& value, float y, bool active = true);
 
     // --- AUDIO ---
     void InitSounds();
@@ -47,15 +57,19 @@ private:
     void SetWindowVolume(float volumeLevel);
     void SetMuteState(bool state);
 
-    // Variables Réseau
-    SOCKET m_socket;
-    std::atomic<bool> m_isRunning;
+    // Réseau
+    NetworkClient m_network;
+    std::string m_ipInput;
+    sf::Clock m_pingClock;
+
+    // Chat
+    ChatBox m_chat;
     
-    // Variables Graphiques
+    // Graphiques
     sf::RenderWindow m_window;
     sf::Font m_font;
 
-    std::atomic<ClientState> m_state;
+    ClientState m_state;
 
     // --- Game Data ---
     std::string m_pseudoInput;
@@ -63,6 +77,7 @@ private:
     sf::Color m_messageColor;
     int m_currentNumberChoice;
     std::string m_winnerName;
+    std::vector<std::string> m_playerNames;
 
     // --- Sounds ---
     sf::SoundBuffer m_bufferSelect;

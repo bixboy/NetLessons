@@ -47,6 +47,9 @@ xmake version 3.0.4+master.b703ec328
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\GameServer.h">
       <Filter>src\Server\public</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\NetworkServer.h">
+      <Filter>src\Server\public</Filter>
+    </ClInclude>
 
 
   </ItemGroup>
@@ -56,6 +59,9 @@ xmake version 3.0.4+master.b703ec328
       <Filter>src\Server</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\GameServer.cpp">
+      <Filter>src\Server\private</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\NetworkServer.cpp">
       <Filter>src\Server\private</Filter>
     </ClCompile>
 
