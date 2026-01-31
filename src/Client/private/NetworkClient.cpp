@@ -13,6 +13,9 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::Connect(const std::string& address, int port)
 {
+    // Nettoyage préventif pour éviter les crashs si on reconnecte
+    Disconnect();
+
     if (address.empty()) 
         return false;
 
@@ -61,6 +64,10 @@ bool NetworkClient::Connect(const std::string& address, int port)
     m_serverAddrLen = static_cast<int>(res->ai_addrlen);
     freeaddrinfo(res);
 
+    // Configurer un timeout de réception (5 secondes)
+    DWORD timeout = 5000;
+    setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
+
     m_isConnected = true;
     m_shouldRun = true;
     
@@ -96,7 +103,14 @@ void NetworkClient::Send(GamePacket& pkt)
     sendto(m_socket, pkt.Data(), pkt.Size(), 0, reinterpret_cast<sockaddr*>(&m_serverAddr), m_serverAddrLen);
 }
 
-void NetworkClient::OnPacket(PacketType type, PacketHandler handler)
+void NetworkClient::Send(const IPacket& packet)
+{
+    GamePacket rawPacket;
+    packet.Serialize(rawPacket);
+    Send(rawPacket);
+}
+
+void NetworkClient::OnPacket(OpCode type, PacketHandler handler)
 {
     m_handlers[type] = handler;
 }
@@ -111,7 +125,7 @@ void NetworkClient::PollEvents()
         
         int typeInt = 0;
         pkt >> typeInt; 
-        PacketType type = static_cast<PacketType>(typeInt);
+        OpCode type = static_cast<OpCode>(typeInt);
         
         auto it = m_handlers.find(type);
         if (it != m_handlers.end())
@@ -153,7 +167,7 @@ void NetworkClient::ReceiveLoop()
                 m_shouldRun = false;
                 
                 GamePacket errorPkt;
-                errorPkt << static_cast<int>(PacketType::Disconnect) << std::string("Serveur");
+                errorPkt << static_cast<int>(OpCode::ConnectionState) << false << std::string("Serveur");
                 PushPacket(errorPkt);
             }
             break;

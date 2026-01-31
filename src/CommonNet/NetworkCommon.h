@@ -13,7 +13,7 @@ const int PORT = 55555;
 const int MAX_PACKET_SIZE = 4096;
 const int TIMEOUT_SECONDS = 5;
 
-enum class PacketType : int
+enum class PacketType_Legacy : int
 {
     Connect = 0,
     Disconnect = 1,
@@ -104,10 +104,25 @@ public:
 
     
     // Accesseurs
-    const char* Data() const { return m_buffer.data(); }
-    int Size() const { return static_cast<int>(m_buffer.size()); }
-    void ResetRead() { m_readPos = 0; }
-    void Clear() { m_buffer.clear(); m_readPos = 0; }
+    const char* Data() const
+    {
+        return m_buffer.data();
+    }
+    
+    int Size() const
+    {
+        return static_cast<int>(m_buffer.size());
+    }
+    
+    void ResetRead()
+    {
+        m_readPos = 0;
+    }
+    
+    void Clear()
+    {
+        m_buffer.clear(); m_readPos = 0;
+    }
 
 private:
     std::vector<char> m_buffer;
@@ -117,10 +132,20 @@ private:
     T SwapEndian(T u)
     {
         static_assert(std::is_trivially_copyable_v<T>);
-        union { T u; unsigned char u8[sizeof(T)]; } source, dest;
+        union
+        {
+            T u; 
+            unsigned char u8[sizeof(T)];
+        }
+        
+        source, dest;
         source.u = u;
+        
         for (size_t k = 0; k < sizeof(T); k++)
+        {
             dest.u8[k] = source.u8[sizeof(T) - k - 1];
+        }
+        
         return dest.u;
     }
 };

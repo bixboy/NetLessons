@@ -41,6 +41,9 @@ xmake version 3.0.4+master.b703ec328
     <ClInclude Include="$(XmakeProjectDir)\src\CommonNet\NetworkCommon.h">
       <Filter>src\CommonNet</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\CommonNet\PacketSystem.h">
+      <Filter>src\CommonNet</Filter>
+    </ClInclude>
 
 
   </ItemGroup>

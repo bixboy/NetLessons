@@ -46,9 +46,10 @@ private:
     
     // UI Helpers
     void DrawBackground();
-    void DrawPanel(float x, float y, float w, float h, sf::Color color);
-    void DrawButton(const std::string& text, float y, bool active = false);
+    void DrawPanel(float x, float y, float w, float h, sf::Color color, float cornerRadius = 0.f);
+    void DrawButton(const std::string& text, float y, bool active = false, bool hovered = false);
     void DrawInputBox(const std::string& label, const std::string& value, float y, bool active = true);
+    void UpdateLayout(); // Appelé lors du resize
 
     // --- AUDIO ---
     void InitSounds();
@@ -68,8 +69,14 @@ private:
     // Graphiques
     sf::RenderWindow m_window;
     sf::Font m_font;
+    sf::Vector2u m_windowSize;
+    float m_centerX;
 
     ClientState m_state;
+    
+    // Animation
+    sf::Clock m_animClock;
+    float m_pulseValue;
 
     // --- Game Data ---
     std::string m_pseudoInput;

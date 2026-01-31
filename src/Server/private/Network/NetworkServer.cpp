@@ -1,4 +1,4 @@
-#include "../public/NetworkServer.h"
+#include "../../public/Network/NetworkServer.h"
 #include <iostream>
 
 NetworkServer::NetworkServer() : m_socket(INVALID_SOCKET), m_isRunning(false)
@@ -76,6 +76,13 @@ void NetworkServer::SendTo(const GamePacket& packet, const sockaddr_in& address)
     }
 }
 
+void NetworkServer::SendTo(const IPacket& packet, const sockaddr_in& address)
+{
+    GamePacket rawPacket;
+    packet.Serialize(rawPacket);
+    SendTo(rawPacket, address);
+}
+
 void NetworkServer::ReceiveLoop()
 {
     char buffer[MAX_PACKET_SIZE];
@@ -118,8 +125,8 @@ void NetworkServer::PollEvents()
 
         int typeInt = 0;
         p.packet >> typeInt;
-        PacketType type = static_cast<PacketType>(typeInt);
-        p.packet.ResetRead();
+        OpCode type = static_cast<OpCode>(typeInt);
+        // NE PAS ResetRead() - le handler doit lire à partir d'ici (après l'OpCode)
 
         auto it = m_handlers.find(type);
         if (it != m_handlers.end())
@@ -131,7 +138,7 @@ void NetworkServer::PollEvents()
     }
 }
 
-void NetworkServer::OnPacket(PacketType type, PacketHandler handler)
+void NetworkServer::OnPacket(OpCode type, PacketHandler handler)
 {
     m_handlers[type] = handler;
 }

@@ -33,9 +33,9 @@ xmake version 3.0.4+master.b703ec328
   </PropertyGroup>
   <PropertyGroup Label="XmakeProgram">
     <XmakeProgramDir Condition="'$(XmakeProgramDir)' == ''">$(XMAKE_PROGRAM_DIR)</XmakeProgramDir>
-    <XmakeProgramDir Condition="'$(XmakeProgramDir)' == ''">C:\Users\PIERRE\xmake</XmakeProgramDir>
+    <XmakeProgramDir Condition="'$(XmakeProgramDir)' == ''">C:\Program Files\xmake</XmakeProgramDir>
     <XmakeProgramFile Condition="'$(XmakeProgramFile)' == ''">$(XMAKE_PROGRAM_FILE)</XmakeProgramFile>
-    <XmakeProgramFile Condition="'$(XmakeProgramFile)' == ''">C:\Users\PIERRE\xmake\xmake.exe</XmakeProgramFile>
+    <XmakeProgramFile Condition="'$(XmakeProgramFile)' == ''">C:\Program Files\xmake\xmake.exe</XmakeProgramFile>
   </PropertyGroup>
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.Defaults.props" />
   <PropertyGroup Label="XmakeConfig" Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
@@ -47,12 +47,12 @@ xmake version 3.0.4+master.b703ec328
     <XmakeKind>binary</XmakeKind>
     <XmakeDefault>true</XmakeDefault>
     <XmakeDefines></XmakeDefines>
-    <XmakeLanguages>cxx17</XmakeLanguages>
+    <XmakeLanguages>cxx20</XmakeLanguages>
     <XmakeSubSystem>console</XmakeSubSystem>
     <XmakeCudaVersion><!-- nil --></XmakeCudaVersion>
     <XmakeWindowsSdkVersion><!-- nil --></XmakeWindowsSdkVersion>
     <XmakeMfcKind><!-- nil --></XmakeMfcKind>
-    <XmakeRunEnvs>PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\DiagnosticsHub\Collector;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\PIERRE\AppData\Local\Microsoft\WindowsApps;C:\Users\PIERRE\AppData\Local\gitkraken\bin;C:\Users\PIERRE\.dotnet\tools;C:\Users\PIERRE\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\PIERRE\AppData\Roaming\npm;D:\Appli\JetBrains Rider 2024.2.4\bin;C:\Users\PIERRE\.aftman\bin;C:\Users\PIERRE\xmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\DiagnosticsHub\Collector;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools;C:\Users\PIERRE\.dotnet;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Users\PIERRE\AppData\Local\Microsoft\WindowsApps;C:\Users\PIERRE\AppData\Local\gitkraken\bin;C:\Apps\Microsoft VS Code\bin;C:\Users\PIERRE\AppData\Roaming\npm;C:\Users\PIERRE\AppData\Local\GitHubDesktop\bin;C:\Apps\JetBrains Rider 2024.2.4\bin;C:\Users\PIERRE\.dotnet\tools;C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8\bin;C:\Program Files\xmake;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\PIERRE\AppData\Local\Programs\Python\Python313\Scripts;C:\Users\PIERRE\AppData\Local\Programs\Python\Python313;C:\Users\PIERRE\AppData\Local\Programs\Python\Launcher;C:\Program Files (x86)\Java\jdk-17.0.16.8\bin;C:\Users\PIERRE\.aftman\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs><!-- nil --></XmakeRunArgs>
     <XmakeConfigFlags></XmakeConfigFlags>
     <XmakeIncludeDirs>$(XmakeProjectDir)\src\CommonNet</XmakeIncludeDirs>
@@ -73,12 +73,12 @@ xmake version 3.0.4+master.b703ec328
     <XmakeKind>binary</XmakeKind>
     <XmakeDefault>true</XmakeDefault>
     <XmakeDefines></XmakeDefines>
-    <XmakeLanguages>cxx17</XmakeLanguages>
+    <XmakeLanguages>cxx20</XmakeLanguages>
     <XmakeSubSystem>console</XmakeSubSystem>
     <XmakeCudaVersion><!-- nil --></XmakeCudaVersion>
     <XmakeWindowsSdkVersion><!-- nil --></XmakeWindowsSdkVersion>
     <XmakeMfcKind><!-- nil --></XmakeMfcKind>
-    <XmakeRunEnvs>PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\DiagnosticsHub\Collector;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\PIERRE\AppData\Local\Microsoft\WindowsApps;C:\Users\PIERRE\AppData\Local\gitkraken\bin;C:\Users\PIERRE\.dotnet\tools;C:\Users\PIERRE\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\PIERRE\AppData\Roaming\npm;D:\Appli\JetBrains Rider 2024.2.4\bin;C:\Users\PIERRE\.aftman\bin;C:\Users\PIERRE\xmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
+    <XmakeRunEnvs>PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\DiagnosticsHub\Collector;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\bin\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools;C:\Users\PIERRE\.dotnet;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Users\PIERRE\AppData\Local\Microsoft\WindowsApps;C:\Users\PIERRE\AppData\Local\gitkraken\bin;C:\Apps\Microsoft VS Code\bin;C:\Users\PIERRE\AppData\Roaming\npm;C:\Users\PIERRE\AppData\Local\GitHubDesktop\bin;C:\Apps\JetBrains Rider 2024.2.4\bin;C:\Users\PIERRE\.dotnet\tools;C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8\bin;C:\Program Files\xmake;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\PIERRE\AppData\Local\Programs\Python\Python313\Scripts;C:\Users\PIERRE\AppData\Local\Programs\Python\Python313;C:\Users\PIERRE\AppData\Local\Programs\Python\Launcher;C:\Program Files (x86)\Java\jdk-17.0.16.8\bin;C:\Users\PIERRE\.aftman\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg;$([System.Environment]::GetEnvironmentVariable('PATH'))</XmakeRunEnvs>
     <XmakeRunArgs><!-- nil --></XmakeRunArgs>
     <XmakeConfigFlags></XmakeConfigFlags>
     <XmakeIncludeDirs>$(XmakeProjectDir)\src\CommonNet</XmakeIncludeDirs>
@@ -108,20 +108,37 @@ xmake version 3.0.4+master.b703ec328
 
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
   <ItemGroup>
-    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\GameServer.h" />
-    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\NetworkServer.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Core\CommandManager.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Core\GameServer.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Network\NetworkServer.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\AuthenticationSystem.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\ChatSystem.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\IServerSystem.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\MiniGameSystem.h" />
 
 
   </ItemGroup>
   <ItemGroup>
 
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\ServerMain.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\CommandManager.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\GameServer.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\GameServer.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\NetworkServer.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\ServerMain.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Network\NetworkServer.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\AuthenticationSystem.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\ChatSystem.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\MiniGameSystem.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
 

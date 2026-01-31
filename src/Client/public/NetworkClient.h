@@ -1,5 +1,5 @@
 #pragma once
-#include "../../CommonNet/NetworkCommon.h"
+#include "../../CommonNet/PacketSystem.h"
 #include <functional>
 #include <map>
 #include <queue>
@@ -23,8 +23,9 @@ public:
     
     // Packets
     void Send(GamePacket& packet);
+    void Send(const IPacket& packet);
     void PollEvents();
-    void OnPacket(PacketType type, PacketHandler handler);
+    void OnPacket(OpCode type, PacketHandler handler);
     
     // Disconnection
     bool IsConnected() const { return m_isConnected; }
@@ -49,6 +50,6 @@ private:
     std::mutex m_queueMutex;
 
     // Handlers
-    std::map<PacketType, PacketHandler> m_handlers;
+    std::map<OpCode, PacketHandler> m_handlers;
     std::function<void(const std::string&)> m_onDisconnect;
 };

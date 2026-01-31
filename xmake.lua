@@ -22,8 +22,9 @@ target("CommonNet")
 target("Server")
     set_kind("binary")
     add_deps("CommonNet")
-    add_files("src/Server/**.cpp")
-    add_headerfiles("src/Server/**.h")
+    add_files("src/Server/private/**.cpp")
+    add_headerfiles("src/Server/public/**.h")
+    add_filegroups("", {rootdir = "src/Server", files = {"src/Server/**"}})
 
 -- Le Client
 target("Client")

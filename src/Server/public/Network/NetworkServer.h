@@ -9,7 +9,8 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
-#include "../../CommonNet/NetworkCommon.h"
+#include "../../../CommonNet/NetworkCommon.h"
+#include "../../../CommonNet/PacketSystem.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -23,10 +24,11 @@ public:
     void Stop();
 
     void SendTo(const GamePacket& packet, const sockaddr_in& address);
+    void SendTo(const IPacket& packet, const sockaddr_in& address);
     void PollEvents();
 
     using PacketHandler = std::function<void(GamePacket&, const sockaddr_in&)>;
-    void OnPacket(PacketType type, PacketHandler handler);
+    void OnPacket(OpCode type, PacketHandler handler);
 
 private:
     void ReceiveLoop();
@@ -44,5 +46,5 @@ private:
 
     std::mutex m_mutex;
     std::queue<ReceivedPacket> m_packetQueue;
-    std::map<PacketType, PacketHandler> m_handlers;
+    std::map<OpCode, PacketHandler> m_handlers;
 };

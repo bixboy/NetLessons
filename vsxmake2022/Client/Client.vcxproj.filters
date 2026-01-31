@@ -58,7 +58,7 @@ xmake version 3.0.4+master.b703ec328
   </ItemGroup>
   <ItemGroup>
 
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\ClienMain.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\ClientMain.cpp">
       <Filter>src\Client</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\ChatBox.cpp">
