@@ -7,6 +7,7 @@
 struct PlayerInfo;
 class GameServer;
 
+
 class CommandManager
 {
 public:

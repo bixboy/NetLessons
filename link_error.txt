@@ -1,0 +1,5 @@
+[0m[38;2;0;255;0;1m[ 76%]:[0m [38;2;255;0;255;1mlinking.release Client.exe[0m
+[0m[38;2;0;255;0;1m[ 81%]:[0m [38;2;255;0;255;1mlinking.release Server.exe[0m
+[0m[1;38;2;255;0;0;1merror: [0mGameClient.cpp.obj : error LNK2019: symbole externe non r‚solu "private: class sf::Color __cdecl GameClient::GetColorFromID(unsigned char)" (?GetColorFromID@GameClient@@AEAA?AVColor@sf@@E@Z) r‚f‚renc‚ dans la fonction "public: __cdecl `private: void __cdecl GameClient::SetupNetworkHandlers(void)'::`2'::<lambda_4>::operator()(class GamePacket &)const " (??R<lambda_4>@?1??SetupNetworkHandlers@GameClient@@AEAAXXZ@QEBA@AEAVGamePacket@@@Z)
+build\windows\x64\release\Client.exe : fatal error LNK1120: 1 externes non r‚solus
+[0m

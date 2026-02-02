@@ -1,4 +1,4 @@
-#include "../../public/Core/GameServer.h"
+#include "Core/GameServer.h"
 
 
 int main(int argc, char** argv)

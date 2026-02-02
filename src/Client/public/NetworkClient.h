@@ -1,5 +1,5 @@
 #pragma once
-#include "../../CommonNet/PacketSystem.h"
+#include "PacketSystem.h"
 #include <functional>
 #include <map>
 #include <queue>
@@ -35,21 +35,19 @@ private:
     void ReceiveLoop();
     void PushPacket(GamePacket pkt);
 
+    // Threading
+    std::thread m_receiveThread;
+    std::queue<GamePacket> m_packetQueue;
+    std::mutex m_queueMutex;
+    
+    // Handlers
+    std::map<OpCode, PacketHandler> m_handlers;
+    std::function<void(const std::string&)> m_onDisconnect;
+    
     // Socket data
     SOCKET m_socket;
     sockaddr_in m_serverAddr;
     int m_serverAddrLen;
     std::atomic<bool> m_isConnected;
     std::atomic<bool> m_shouldRun;
-
-    // Threading
-    std::thread m_receiveThread;
-    
-    // Thread-Safe Queue
-    std::queue<GamePacket> m_packetQueue;
-    std::mutex m_queueMutex;
-
-    // Handlers
-    std::map<OpCode, PacketHandler> m_handlers;
-    std::function<void(const std::string&)> m_onDisconnect;
 };

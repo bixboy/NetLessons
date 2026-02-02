@@ -3,6 +3,7 @@
 class GameServer;
 struct PlayerInfo;
 
+
 class IServerSystem
 {
 public:

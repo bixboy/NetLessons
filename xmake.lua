@@ -22,9 +22,9 @@ target("CommonNet")
 target("Server")
     set_kind("binary")
     add_deps("CommonNet")
-    add_files("src/Server/private/**.cpp")
-    add_headerfiles("src/Server/public/**.h")
-    add_filegroups("", {rootdir = "src/Server", files = {"src/Server/**"}})
+    add_files("src/Server/**.cpp")
+    add_headerfiles("src/Server/**.h")
+    add_includedirs("src/Server/public")
 
 -- Le Client
 target("Client")
@@ -33,6 +33,7 @@ target("Client")
     add_packages("sfml")
     add_files("src/Client/**.cpp")
     add_headerfiles("src/Client/**.h")
+    add_includedirs("src/Client/public")
     
     if is_plat("windows") then
         add_ldflags("/SUBSYSTEM:WINDOWS", "/ENTRY:mainCRTStartup", {force = true})

@@ -9,9 +9,10 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
-#include "../../../CommonNet/NetworkCommon.h"
-#include "../../../CommonNet/PacketSystem.h"
 
+
+
+#include "PacketSystem.h"
 #pragma comment(lib, "ws2_32.lib")
 
 class NetworkServer

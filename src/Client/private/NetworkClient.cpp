@@ -1,4 +1,4 @@
-#include "../public/NetworkClient.h"
+#include "NetworkClient.h"
 
 
 NetworkClient::NetworkClient() : m_socket(INVALID_SOCKET), m_isConnected(false), m_shouldRun(false), m_serverAddrLen(sizeof(sockaddr_in))
@@ -13,7 +13,6 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::Connect(const std::string& address, int port)
 {
-    // Nettoyage préventif pour éviter les crashs si on reconnecte
     Disconnect();
 
     if (address.empty()) 
@@ -64,7 +63,6 @@ bool NetworkClient::Connect(const std::string& address, int port)
     m_serverAddrLen = static_cast<int>(res->ai_addrlen);
     freeaddrinfo(res);
 
-    // Configurer un timeout de réception (5 secondes)
     DWORD timeout = 5000;
     setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
 

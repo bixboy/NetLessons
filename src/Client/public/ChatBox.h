@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include <deque>
 #include <string>
 #include <functional>
@@ -9,10 +10,11 @@
 enum class MessageType
 {
     Normal,     // Message de joueur
-    System,     // Événement système (join/leave)
+    System,     // Evenement systeme (join/leave)
     Info,       // Information du jeu
     Error,      // Erreur
-    Success     // Victoire, etc.
+    Success,    // Victoire
+    Whisper     // Message privé
 };
 
 class ChatBox
@@ -27,11 +29,14 @@ public:
     
     void Draw(sf::RenderWindow& window);
     
-    void AddMessage(const std::string& sender, const std::string& content, sf::Color color = sf::Color::White);
-    void AddMessage(const std::string& sender, const std::string& content, MessageType type);
+    void AddChannel(const std::string& name);
+    void AddMessage(const std::string& channel, const std::string& sender, const std::string& content, MessageType type, std::optional<sf::Color> customColor = std::nullopt);
     
-    void SetOnSendMessage(std::function<void(const std::string&)> callback);
 
+
+    void SetActiveChannel(const std::string& name);
+    std::string GetActiveChannel() const { return m_activeChannel; }
+    void SetOnSendMessage(std::function<void(const std::string&)> callback);
     bool IsTyping() const { return m_isTyping; }
 
 private:
@@ -42,6 +47,14 @@ private:
         sf::Text prefixObj;
         MessageType type;
         float lifetime; 
+        std::string channel;
+    };
+
+    struct ChatTab
+    {
+        std::string name;
+        std::deque<ChatMessage> messages;
+        bool hasUnread = false;
     };
 
     void UpdateLayout();
@@ -52,13 +65,18 @@ private:
     sf::Font* m_font;
     sf::RectangleShape m_bg;
     sf::RectangleShape m_inputBg;
+    sf::RectangleShape m_tabBg;
+    sf::RectangleShape m_minimizeBtn;
+    std::optional<sf::Text> m_minimizeText;
+    bool m_isMinimized = false;
     sf::Vector2f m_position;
     sf::Vector2f m_size;
     
     std::optional<sf::Text> m_inputText;
     
     // Data
-    std::deque<ChatMessage> m_messages;
+    std::vector<ChatTab> m_tabs;
+    std::string m_activeChannel = "Global";
     std::string m_currentInput;
     bool m_isTyping;
     
@@ -68,6 +86,7 @@ private:
     
     // Paramètres
     int m_maxMessages;
+    int m_scrollOffset;
     float m_lineHeight;
     
     std::function<void(const std::string&)> m_onSend;

@@ -4,8 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <string>
-#include <atomic>
-#include <mutex>
+
 
 enum class ClientState
 {
@@ -15,6 +14,7 @@ enum class ClientState
     Game,
     Result
 };
+
 
 class GameClient
 {
@@ -49,7 +49,7 @@ private:
     void DrawPanel(float x, float y, float w, float h, sf::Color color, float cornerRadius = 0.f);
     void DrawButton(const std::string& text, float y, bool active = false, bool hovered = false);
     void DrawInputBox(const std::string& label, const std::string& value, float y, bool active = true);
-    void UpdateLayout(); // Appelé lors du resize
+    void UpdateLayout();
 
     // --- AUDIO ---
     void InitSounds();
@@ -62,6 +62,10 @@ private:
     NetworkClient m_network;
     std::string m_ipInput;
     sf::Clock m_pingClock;
+    
+    // Joueurs & Couleurs
+    std::map<std::string, sf::Color> m_playerColors;
+    sf::Color GetColorFromID(uint8_t id);
 
     // Chat
     ChatBox m_chat;

@@ -24,9 +24,6 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="src\Server\private\Core">
       <UniqueIdentifier>{E9EDC5C9-18CC-4E89-BFDC-DA67CEB1FBA6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Server\private\Network">
-      <UniqueIdentifier>{B7C957F7-96CF-40A8-BBD8-E321984CFEC2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Server\private\Systems">
       <UniqueIdentifier>{13F2AB7B-8C27-49DB-9FD0-875EAEFB144E}</UniqueIdentifier>
     </Filter>
@@ -35,9 +32,6 @@ xmake version 3.0.4+master.b703ec328
     </Filter>
     <Filter Include="src\Server\public\Core">
       <UniqueIdentifier>{7771BE87-5A18-41E5-9D82-2C2F64E3D7B8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Server\public\Network">
-      <UniqueIdentifier>{F3DA42CA-7B9D-4CBC-B87E-9C0EA8356C90}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Server\public\Systems">
       <UniqueIdentifier>{B9197621-63B0-49E6-98EC-4BE485C07955}</UniqueIdentifier>
@@ -68,8 +62,8 @@ xmake version 3.0.4+master.b703ec328
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Core\GameServer.h">
       <Filter>src\Server\public\Core</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Network\NetworkServer.h">
-      <Filter>src\Server\public\Network</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\NetworkServer.h">
+      <Filter>src\Server\public</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\AuthenticationSystem.h">
       <Filter>src\Server\public\Systems</Filter>
@@ -88,17 +82,17 @@ xmake version 3.0.4+master.b703ec328
   </ItemGroup>
   <ItemGroup>
 
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\ServerMain.cpp">
+      <Filter>src\Server</Filter>
+    </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\CommandManager.cpp">
       <Filter>src\Server\private\Core</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\GameServer.cpp">
       <Filter>src\Server\private\Core</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\ServerMain.cpp">
-      <Filter>src\Server\private\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Network\NetworkServer.cpp">
-      <Filter>src\Server\private\Network</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\NetworkServer.cpp">
+      <Filter>src\Server\private</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\AuthenticationSystem.cpp">
       <Filter>src\Server\private\Systems</Filter>

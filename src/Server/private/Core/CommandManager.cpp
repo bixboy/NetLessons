@@ -1,4 +1,4 @@
-#include "../../public/Core/CommandManager.h"
+#include "Core/CommandManager.h"
 #include <sstream>
 #include <iostream>
 

@@ -1,16 +1,26 @@
-﻿#include "../Network/NetworkServer.h"
+﻿#pragma once
+#include <memory>
+#include <vector>
+#include <chrono>
+#include <string>
+
+#include "Systems/IServerSystem.h"
+#include "NetworkServer.h"
 #include "CommandManager.h"
+#include "PacketSystem.h"
+
+class CommandManager;
+
 
 struct PlayerInfo
 {
-    sockaddr_in address;
-    std::string pseudo;
-    std::chrono::steady_clock::time_point lastPacketTime;
+    sockaddr_in address = {};
+    std::string pseudo = "";
+    std::chrono::steady_clock::time_point lastPacketTime = {};
+    bool isAdmin = false;
+    uint8_t colorID = 0;
+    bool isSpectator = false;
 };
-
-#include <memory>
-#include <vector>
-#include "../Systems/IServerSystem.h"
 
 class GameServer
 {
@@ -21,12 +31,10 @@ public:
     bool Initialize();
     void Run();
 
-    // Accessors for Systems
     NetworkServer& GetNetwork() { return m_network; }
     CommandManager& GetCommandManager() { return m_commandManager; }
     std::vector<PlayerInfo>& GetPlayers() { return m_players; }
 
-    // System Management
     template <typename T>
     T* AddSystem()
     {
@@ -39,7 +47,6 @@ public:
     void Broadcast(const IPacket& pkt, const sockaddr_in* senderToIgnore = nullptr);
     void SendTo(const sockaddr_in& target, const IPacket& pkt);
     
-    // Player Management Helpers
     PlayerInfo* GetPlayerByAddr(const sockaddr_in& addr);
     void RemovePlayer(const sockaddr_in& addr);
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "IServerSystem.h"
 
+
 class ChatSystem : public IServerSystem
 {
 public:

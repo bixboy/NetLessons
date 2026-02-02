@@ -9,25 +9,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="41070ad6-fe81-41cd-8a8e-2468a04038c8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../src/Client/ClienMain.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/private/ChatBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/ChatBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/private/NetworkClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/NetworkClient.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/public/ChatBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/ChatBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/public/GameClient.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/GameClient.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/public/NetworkClient.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/NetworkClient.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/CommonNet/NetworkCommon.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/CommonNet/NetworkCommon.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/ServerMain.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/private/GameServer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/private/NetworkServer.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/public/GameServer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/public/NetworkServer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/CommonNet/PacketSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/CommonNet/PacketSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Core/CommandManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Core/CommandManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Core/GameServer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Core/GameServer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Core/ServerMain.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Core/ServerMain.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Network/NetworkServer.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Systems/AuthenticationSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Systems/AuthenticationSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Systems/ChatSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Systems/ChatSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/private/Systems/MiniGameSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Systems/MiniGameSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Core/CommandManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Core/CommandManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Core/GameServer.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Core/GameServer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Network/NetworkServer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Systems/AuthenticationSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Systems/AuthenticationSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Systems/ChatSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Systems/ChatSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Systems/IServerSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Systems/IServerSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/Server/public/Systems/MiniGameSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Systems/MiniGameSystem.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj.filters" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/CommonNet/CommonNet.vcxproj.filters" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetLessons.sln" beforeDir="false" afterPath="$PROJECT_DIR$/NetLessons.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Server.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Server.vcxproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/Server.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Server.vcxproj.filters" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../xmake.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../xmake.lua" afterDir="false" />
@@ -49,7 +52,7 @@
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="Toolset" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -108,6 +111,18 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration default="true" type="GODOT_DEBUG_RUN_CONFIGURATION" factoryName="Start and Debug">
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
+      <method v="2">
+        <option name="Build Solution" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -124,6 +139,7 @@
       <workItem from="1769760560859" duration="2893000" />
       <workItem from="1769873671723" duration="4860000" />
       <workItem from="1769883702364" duration="563000" />
+      <workItem from="1769937507782" duration="10349000" />
     </task>
     <servers />
   </component>

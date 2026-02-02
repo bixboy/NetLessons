@@ -1,10 +1,14 @@
-﻿#include "../public/GameClient.h"
+﻿#include "GameClient.h"
 #include <algorithm>
 #include <iostream>
-#include <thread>
+
 #include <cmath>
+#ifdef _WIN32
+#include <Windows.h>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
+#include <wrl/client.h>
+#endif
 
 
 GameClient::GameClient() 
@@ -30,7 +34,8 @@ GameClient::~GameClient()
 void GameClient::SetupNetworkHandlers()
 {    
     // GAME DATA (PLUS / MOINS)
-    m_network.OnPacket(OpCode::GameData, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::GameData, [this](GamePacket& rawPkt) 
+    {
         PacketGameData pkt;
         pkt.Deserialize(rawPkt);
         
@@ -47,7 +52,8 @@ void GameClient::SetupNetworkHandlers()
     });
 
     // RESULT (VICTOIRE / DEFAITE)
-    m_network.OnPacket(OpCode::GameResult, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::GameResult, [this](GamePacket& rawPkt) 
+    {
         PacketGameResult pkt;
         pkt.Deserialize(rawPkt);
 
@@ -60,27 +66,40 @@ void GameClient::SetupNetworkHandlers()
              SetMuteState(false);
              SetWindowVolume(100.f);
              PlaySound(m_soundWin);
-             m_chat.AddMessage("", "Félicitations, tu as gagné !", MessageType::Success);
+             m_chat.AddMessage("Global", "", "Félicitations, tu as gagné !", MessageType::Success);
         }
         else
         {
              PlaySound(m_soundLose);
-             m_chat.AddMessage("", pkt.WinnerName + " a trouvé le nombre !", MessageType::Info);
+             m_chat.AddMessage("Global", "", pkt.WinnerName + " a trouvé le nombre !", MessageType::Info);
         }
     });
 
     // GAME START
-    m_network.OnPacket(OpCode::GameStart, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::GameStart, [this](GamePacket& rawPkt) 
+    {
         m_state = ClientState::Game;
         m_serverMessage = "DEVINE LE NOMBRE !";
         m_messageColor = sf::Color::White;
         m_currentNumberChoice = 50;
         PlaySound(m_soundSelect);
-        m_chat.AddMessage("", "La partie commence !", MessageType::Info);
+        m_chat.AddMessage("Global", "", "La partie commence !", MessageType::Info);
+    });
+
+    // GAME END
+    m_network.OnPacket(OpCode::GameEnd, [this](GamePacket& rawPkt)
+    {
+         m_state = ClientState::Lobby;
+         m_currentNumberChoice = 0;
+         m_serverMessage = "Partie terminée par le serveur";
+         m_winnerName = "";
+         PlaySound(m_soundLeave);
+         m_chat.AddMessage("System", "", "Le serveur a réinitialisé la partie.", MessageType::Info);
     });
 
     // CONNECTION STATE (JOIN / LEAVE)
-    m_network.OnPacket(OpCode::ConnectionState, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::ConnectionState, [this](GamePacket& rawPkt) 
+    {
         PacketConnectionState pkt;
         pkt.Deserialize(rawPkt);
 
@@ -90,38 +109,104 @@ void GameClient::SetupNetworkHandlers()
              m_messageColor = sf::Color(100, 255, 200);
              PlaySound(m_soundJoin);
              m_playerNames.push_back(pkt.Pseudo);
-             m_chat.AddMessage(pkt.Pseudo, "a rejoint la partie", MessageType::System);
+             m_playerColors[pkt.Pseudo] = GetColorFromID(pkt.ColorID);
+             m_chat.AddMessage("System", pkt.Pseudo, "a rejoint la partie", MessageType::System);
         }
         else
         {
              m_serverMessage = pkt.Pseudo + " est parti.";
              m_messageColor = sf::Color(255, 200, 100);
              PlaySound(m_soundLeave);
-             m_chat.AddMessage(pkt.Pseudo, "a quitté la partie", MessageType::System);
+             m_chat.AddMessage("System", pkt.Pseudo, "a quitté la partie", MessageType::System);
              
              auto it = std::remove(m_playerNames.begin(), m_playerNames.end(), pkt.Pseudo);
-             if (it != m_playerNames.end()) m_playerNames.erase(it, m_playerNames.end());
+            
+             if (it != m_playerNames.end())
+                 m_playerNames.erase(it, m_playerNames.end());
+             
+             m_playerColors.erase(pkt.Pseudo);
         }
     });
 
     // PLAYER LIST
-    m_network.OnPacket(OpCode::PlayerList, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::PlayerList, [this](GamePacket& rawPkt) 
+    {
         PacketPlayerList pkt;
         pkt.Deserialize(rawPkt);
         m_playerNames.push_back(pkt.Pseudo);
+        m_playerColors[pkt.Pseudo] = GetColorFromID(pkt.ColorID);
     });
 
     // CHAT
-    m_network.OnPacket(OpCode::Chat, [this](GamePacket& rawPkt) {
+    m_network.OnPacket(OpCode::Chat, [this](GamePacket& rawPkt) 
+    {
         PacketChat pkt;
         pkt.Deserialize(rawPkt);
-        m_chat.AddMessage(pkt.Sender, pkt.Message, MessageType::Normal);
+        if (!pkt.Target.empty())
+        {
+             // Whisper
+             std::string prefix;
+             if (pkt.Sender == m_pseudoInput)
+                prefix = "A " + pkt.Target;
+             else
+                prefix = "De " + pkt.Sender;
+
+             m_chat.AddMessage(pkt.ChannelName, prefix, pkt.Message, MessageType::Whisper);
+        }
+        else
+        {
+             sf::Color senderColor = sf::Color(130, 180, 255);
+             if (m_playerColors.count(pkt.Sender))
+                 senderColor = m_playerColors[pkt.Sender];
+
+             m_chat.AddMessage(pkt.ChannelName, pkt.Sender, pkt.Message, MessageType::Normal, senderColor);
+        }
     });
 
     // Envoi du chat
-    m_chat.SetOnSendMessage([this](const std::string& msg){
+    m_chat.SetOnSendMessage([this](const std::string& msg)
+    {
         PacketChat pkt;
-        pkt.Message = msg;
+        
+        // Command /lobby
+        if (msg == "/lobby")
+        {
+             if (m_state == ClientState::Game || m_state == ClientState::Result)
+             {
+                 m_state = ClientState::Lobby;
+                 m_currentNumberChoice = 0;
+                 m_serverMessage = "";
+                 m_winnerName = "";
+                 m_chat.AddMessage("System", "", "Retour au lobby.", MessageType::Info);
+                 
+                 PacketPlayerState pState;
+                 pState.IsSpectator = true;
+                 m_network.Send(pState);
+
+                 return;
+             }
+             m_chat.AddMessage("System", "", "Commande impossible ici.", MessageType::Error);
+             return;
+        }
+
+        // Command /Whisper
+        if (msg.rfind("/w ", 0) == 0)
+        {
+             size_t firstSpace = msg.find(' ');
+             size_t secondSpace = msg.find(' ', firstSpace + 1);
+             
+             if (secondSpace != std::string::npos)
+             {
+                 pkt.Target = msg.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+                 pkt.Message = msg.substr(secondSpace + 1);
+             }
+        }
+        else
+        {
+             pkt.Message = msg;
+        }
+
+        pkt.ChannelName = m_chat.GetActiveChannel();
         m_network.Send(pkt);
     });
 }
@@ -139,8 +224,9 @@ void GameClient::Run()
         std::cerr << "ERREUR: arial.ttf manquant !" << std::endl;
     }
 
-    // Setup du chat avec la font
     m_chat.Setup(m_font, {240.f, 440.f}, {500.f, 160.f});
+    m_chat.AddChannel("Game");
+    m_chat.AddChannel("System");
     
     UpdateLayout();
     InitSounds();
@@ -149,8 +235,6 @@ void GameClient::Run()
     while (m_window.isOpen())
     {
         m_network.PollEvents();
-        
-        // Animation pulse
         m_pulseValue = (std::sin(m_animClock.getElapsedTime().asSeconds() * 3.f) + 1.f) / 2.f;
         
         if (m_state != ClientState::IpConfig && !m_network.IsConnected())
@@ -158,7 +242,7 @@ void GameClient::Run()
              m_serverMessage = "Connexion perdue.";
              m_messageColor = sf::Color(255, 100, 100);
              m_state = ClientState::IpConfig;
-             m_chat.AddMessage("", "Connexion au serveur perdue", MessageType::Error);
+             m_chat.AddMessage("Global", "", "Connexion au serveur perdue", MessageType::Error);
         }
         else if (m_network.IsConnected() && m_pingClock.getElapsedTime().asSeconds() > 1.0f)
         {
@@ -175,7 +259,6 @@ void GameClient::Run()
             }
             else if (event->is<sf::Event::Resized>())
             {
-                // Gérer le resize
                 m_windowSize = m_window.getSize();
                 m_centerX = static_cast<float>(m_windowSize.x) / 2.f;
                 
@@ -230,7 +313,6 @@ void GameClient::Run()
 
 void GameClient::UpdateLayout()
 {
-    // Repositionner le chat en fonction de la taille de la fenêtre
     float chatWidth = (std::min)(500.f, static_cast<float>(m_windowSize.x) - 260.f);
     float chatHeight = 160.f;
     float chatX = 240.f;
@@ -281,55 +363,79 @@ void GameClient::PlaySound(sf::Sound& sound)
 
 void GameClient::SetWindowVolume(float volumeLevel)
 {
+#ifdef _WIN32
     volumeLevel = (std::max)(volumeLevel, 100.f);
 
-    HRESULT hr;
+    HRESULT hr = CoInitialize(NULL);
+    bool coInitSuccess = SUCCEEDED(hr);
 
-    CoInitialize(NULL);
-
-    IMMDeviceEnumerator* deviceEnumerator = NULL;
-    IMMDevice* defaultDevice = NULL;
-    IAudioEndpointVolume* endpointVolume = NULL;
-
-    hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (LPVOID*)&deviceEnumerator);
-    if (SUCCEEDED(hr))
+    if (coInitSuccess || hr == RPC_E_CHANGED_MODE)
     {
-        hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &defaultDevice);
-        if (SUCCEEDED(hr))
         {
-            hr = defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (LPVOID*)&endpointVolume);
+            Microsoft::WRL::ComPtr<IMMDeviceEnumerator> deviceEnumerator;
+            Microsoft::WRL::ComPtr<IMMDevice> defaultDevice;
+            Microsoft::WRL::ComPtr<IAudioEndpointVolume> endpointVolume;
+
+            hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (void**)&deviceEnumerator);
             if (SUCCEEDED(hr))
             {
-                float newVolume = volumeLevel / 100.0f;
-                
-                endpointVolume->SetMasterVolumeLevelScalar(newVolume, NULL);
-                endpointVolume->Release();
+                hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &defaultDevice);
+                if (SUCCEEDED(hr))
+                {
+                    hr = defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (void**)&endpointVolume);
+                    if (SUCCEEDED(hr))
+                    {
+                        float newVolume = volumeLevel / 100.0f;
+                        endpointVolume->SetMasterVolumeLevelScalar(newVolume, NULL);
+                    }
+                }
             }
-            defaultDevice->Release();
         }
-        deviceEnumerator->Release();
+        
+        if (coInitSuccess)
+        {
+            CoUninitialize();
+        }
     }
+#endif
 
-    CoUninitialize();
 }
 
 void GameClient::SetMuteState(bool state)
 {
-    CoInitialize(NULL);
-    IMMDeviceEnumerator* deviceEnumerator = NULL;
-    IMMDevice* defaultDevice = NULL;
-    IAudioEndpointVolume* endpointVolume = NULL;
+#ifdef _WIN32
+    HRESULT hr = CoInitialize(NULL);
+    bool coInitSuccess = SUCCEEDED(hr);
 
-    CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (LPVOID*)&deviceEnumerator);
-    deviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &defaultDevice);
-    defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (LPVOID*)&endpointVolume);
+    if (coInitSuccess || hr == RPC_E_CHANGED_MODE)
+    {
+        {
+            Microsoft::WRL::ComPtr<IMMDeviceEnumerator> deviceEnumerator;
+            Microsoft::WRL::ComPtr<IMMDevice> defaultDevice;
+            Microsoft::WRL::ComPtr<IAudioEndpointVolume> endpointVolume;
 
-    endpointVolume->SetMute(state, NULL); 
+            hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (void**)&deviceEnumerator);
+            if (SUCCEEDED(hr))
+            {
+                hr = deviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &defaultDevice);
+                if (SUCCEEDED(hr))
+                {
+                    hr = defaultDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, NULL, (void**)&endpointVolume);
+                    if (SUCCEEDED(hr))
+                    {
+                        endpointVolume->SetMute(state, NULL);
+                    }
+                }
+            }
+        }
 
-    endpointVolume->Release();
-    defaultDevice->Release();
-    deviceEnumerator->Release();
-    CoUninitialize();
+        if (coInitSuccess)
+        {
+            CoUninitialize();
+        }
+    }
+#endif
+
 }
 
 
@@ -355,7 +461,7 @@ void GameClient::HandleInput(const sf::Event& event)
         {
             PacketGameStart pkt;
             m_network.Send(pkt);
-            m_chat.AddMessage("", "Lancement de la partie...", MessageType::Info);
+            m_chat.AddMessage("Global", "", "Lancement de la partie...", MessageType::Info);
         }
         else if (m_state == ClientState::Game)
         {
@@ -439,7 +545,7 @@ void GameClient::HandleLoginInput(const sf::Event& event)
             m_serverMessage = "Bienvenue " + m_pseudoInput + " !";
             m_playerNames.push_back(m_pseudoInput);
             PlaySound(m_soundJoin);
-            m_chat.AddMessage("", "Bienvenue dans le lobby !", MessageType::Success);
+            m_chat.AddMessage("Global", "", "Bienvenue dans le lobby !", MessageType::Success);
         }
     }
 }
@@ -479,11 +585,9 @@ void GameClient::HandleGameInput(sf::Keyboard::Key key)
 
 void GameClient::DrawBackground()
 {
-    // Gradient subtil
     sf::RectangleShape gradient({static_cast<float>(m_windowSize.x), static_cast<float>(m_windowSize.y)});
     gradient.setPosition({0, 0});
     
-    // Lignes décoratives subtiles
     sf::Color lineColor(30, 30, 45, 100);
     for (int i = 0; i < 20; i++)
     {
@@ -518,7 +622,6 @@ void GameClient::DrawButton(const std::string& textStr, float y, bool active, bo
     
     if (active)
     {
-        // Animation pulse pour les boutons actifs
         uint8_t pulse = static_cast<uint8_t>(m_pulseValue * 30);
         baseColor = sf::Color(0, 180 + pulse, 230 + pulse / 2);
     }
@@ -558,7 +661,6 @@ void GameClient::DrawInputBox(const std::string& label, const std::string& value
     box.setOutlineColor(active ? sf::Color(0, 200, 255) : sf::Color(80, 80, 100));
     m_window.draw(box);
 
-    // Curseur clignotant
     std::string displayValue = value;
     if (active)
     {
@@ -635,7 +737,7 @@ void GameClient::DrawLogin()
 
 void GameClient::DrawLobby()
 {
-    // Panel des joueurs (gauche)
+    // Panel joueurs
     DrawPanel(20.f, 20.f, 200.f, m_windowSize.y - 40.f, sf::Color(20, 20, 30, 230));
     
     sf::Text listTitle(m_font);
@@ -660,7 +762,9 @@ void GameClient::DrawLobby()
         
         bool isMe = (name == m_pseudoInput);
         pName.setFillColor(isMe ? sf::Color(100, 255, 150) : sf::Color(200, 200, 200));
-        if (isMe) pName.setStyle(sf::Text::Bold);
+        
+        if (isMe)
+            pName.setStyle(sf::Text::Bold);
         
         pName.setCharacterSize(15);
         pName.setPosition({40.f, y});
@@ -713,34 +817,39 @@ void GameClient::DrawLobby()
 
 void GameClient::DrawGame()
 {
-    // Panel info en haut
-    DrawPanel(m_centerX - 180.f, 20.f, 360.f, 80.f, sf::Color(20, 20, 30, 230));
+    float centerY = m_windowSize.y / 2.f;
+    float offset = centerY - 230.f;
+
+    // Panel info
+    DrawPanel(m_centerX - 180.f, 20.f + offset, 360.f, 80.f, sf::Color(20, 20, 30, 230));
     
+    // Title
     sf::Text title(m_font);
     title.setString("TROUVE LE NOMBRE");
     title.setFillColor(sf::Color(0, 200, 255));
     title.setStyle(sf::Text::Bold);
-    CenterText(title, 40, 22);
+    CenterText(title, 40.f + offset, 22);
     m_window.draw(title);
 
+    // Resultat
     sf::Text result(m_font);
     result.setString(m_serverMessage);
     result.setFillColor(m_messageColor);
-    CenterText(result, 72, 16);
+    CenterText(result, 72.f + offset, 16);
     m_window.draw(result);
 
-    // Cercle principal avec le nombre
+    // Cercle principal
     float circleRadius = 90.f;
     sf::CircleShape circle(circleRadius);
     circle.setFillColor(sf::Color(25, 25, 35));
     circle.setOutlineThickness(4.f);
     
-    // Couleur du cercle qui pulse
+    // Couleur cercle
     uint8_t pulse = static_cast<uint8_t>(m_pulseValue * 50);
     circle.setOutlineColor(sf::Color(0, 180 + pulse, 230 + pulse / 2));
     
     circle.setOrigin({circleRadius, circleRadius});
-    circle.setPosition({m_centerX, 230.f});
+    circle.setPosition({m_centerX, 230.f + offset});
     m_window.draw(circle);
 
     // Nombre
@@ -750,60 +859,64 @@ void GameClient::DrawGame()
     nb.setStyle(sf::Text::Bold);
     nb.setCharacterSize(55);
     sf::FloatRect nbBounds = nb.getLocalBounds();
-    nb.setPosition({m_centerX - nbBounds.size.x / 2.f, 195.f});
+    nb.setPosition({m_centerX - nbBounds.size.x / 2.f, 195.f + offset});
     m_window.draw(nb);
 
-    // Flèches indicatrices
+    // Fleche haut
     sf::Text arrowUp(m_font);
     arrowUp.setString("^");
     arrowUp.setFillColor(m_currentNumberChoice < 100 ? sf::Color(100, 255, 150) : sf::Color(60, 60, 80));
     arrowUp.setCharacterSize(30);
-    CenterText(arrowUp, 120, 30);
+    CenterText(arrowUp, 120.f + offset, 30);
     m_window.draw(arrowUp);
 
+    // Fleche bas
     sf::Text arrowDown(m_font);
     arrowDown.setString("v");
     arrowDown.setFillColor(m_currentNumberChoice > 0 ? sf::Color(255, 100, 100) : sf::Color(60, 60, 80));
     arrowDown.setCharacterSize(30);
-    CenterText(arrowDown, 310, 30);
+    CenterText(arrowDown, 310.f + offset, 30);
     m_window.draw(arrowDown);
 
-    // Bouton valider
-    DrawButton("VALIDER  [ENTREE]", 400.f, true);
+    // Validation
+    DrawButton("VALIDER  [ENTREE]", 400.f + offset, true);
     
-    // Contrôles
+    // Description
     sf::Text hint(m_font);
     hint.setString("Utilisez HAUT / BAS pour changer le nombre");
     hint.setFillColor(sf::Color(100, 100, 130));
-    CenterText(hint, 460, 13);
+    CenterText(hint, 460.f + offset, 13);
     m_window.draw(hint);
 }
 
 void GameClient::DrawResult()
 {
+    float centerY = m_windowSize.y / 2.f;
+    float offset = centerY - 225.f;
+
     bool isWinner = (m_winnerName == "TOI !");
     
     sf::Text title(m_font);
     title.setString(isWinner ? "VICTOIRE !" : "PARTIE TERMINEE");
     title.setFillColor(isWinner ? sf::Color(100, 255, 150) : sf::Color(255, 100, 100));
     title.setStyle(sf::Text::Bold);
-    CenterText(title, 100, 48);
+    CenterText(title, 100.f + offset, 48);
     m_window.draw(title);
 
     sf::Text winnerLabel(m_font);
     winnerLabel.setString("Gagnant");
     winnerLabel.setFillColor(sf::Color(120, 120, 150));
-    CenterText(winnerLabel, 180, 16);
+    CenterText(winnerLabel, 180.f + offset, 16);
     m_window.draw(winnerLabel);
 
     sf::Text winner(m_font);
     winner.setString(m_winnerName);
     winner.setFillColor(sf::Color::White);
     winner.setStyle(sf::Text::Bold);
-    CenterText(winner, 220, 32);
+    CenterText(winner, 220.f + offset, 32);
     m_window.draw(winner);
 
-    DrawButton("REJOUER  [ENTREE]", 350.f, true);
+    DrawButton("REJOUER  [ENTREE]", 350.f + offset, true);
 }
 
 void GameClient::CenterText(sf::Text& text, float y, int fontSize)
@@ -811,4 +924,23 @@ void GameClient::CenterText(sf::Text& text, float y, int fontSize)
     text.setCharacterSize(fontSize);
     sf::FloatRect bounds = text.getLocalBounds();
     text.setPosition({m_centerX - (bounds.size.x / 2.f), y});
+}
+
+sf::Color GameClient::GetColorFromID(uint8_t id)
+{
+    static const sf::Color colors[] = {
+        sf::Color(255, 100, 100), // Rouge
+        sf::Color(100, 255, 100), // Vert
+        sf::Color(100, 100, 255), // Bleu
+        sf::Color(255, 255, 100), // Jaune
+        sf::Color(255, 100, 255), // Rose
+        sf::Color(100, 255, 255), // Cyan
+        sf::Color(255, 165, 0),   // Orange
+        sf::Color(150, 100, 255)  // Violet
+    };
+
+    if (id < 8) 
+        return colors[id];
+
+    return sf::Color::White;
 }

@@ -1,5 +1,10 @@
-#include "../../public/Network/NetworkServer.h"
+#include "NetworkServer.h"
+
+#include "NetworkCommon.h"
+#include "PacketSystem.h"
+
 #include <iostream>
+
 
 NetworkServer::NetworkServer() : m_socket(INVALID_SOCKET), m_isRunning(false)
 {
@@ -86,6 +91,7 @@ void NetworkServer::SendTo(const IPacket& packet, const sockaddr_in& address)
 void NetworkServer::ReceiveLoop()
 {
     char buffer[MAX_PACKET_SIZE];
+    
     sockaddr_in sender;
     int senderLen = sizeof(sender);
 
@@ -126,7 +132,6 @@ void NetworkServer::PollEvents()
         int typeInt = 0;
         p.packet >> typeInt;
         OpCode type = static_cast<OpCode>(typeInt);
-        // NE PAS ResetRead() - le handler doit lire à partir d'ici (après l'OpCode)
 
         auto it = m_handlers.find(type);
         if (it != m_handlers.end())

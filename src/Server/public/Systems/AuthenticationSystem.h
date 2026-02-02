@@ -1,6 +1,7 @@
 #pragma once
 #include "IServerSystem.h"
 
+
 class AuthenticationSystem : public IServerSystem
 {
 public:

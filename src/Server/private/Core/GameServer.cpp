@@ -1,12 +1,16 @@
-﻿#include "../../public/Core/GameServer.h"
-#include "../../public/Systems/AuthenticationSystem.h"
-#include "../../public/Systems/ChatSystem.h"
-#include "../../public/Systems/MiniGameSystem.h"
+﻿#include "Core/GameServer.h"
+#include "Systems/AuthenticationSystem.h"
+#include "Systems/ChatSystem.h"
+#include "Systems/MiniGameSystem.h"
+
+#include "NetworkCommon.h"
+#include "PacketSystem.h"
+
 #include <iostream>
 #include <algorithm>
 #include <thread>
 #include <chrono>
-#include <fstream>
+
 
 GameServer::GameServer() : m_commandManager(this)
 {
@@ -19,11 +23,8 @@ GameServer::~GameServer()
 bool GameServer::Initialize()
 {
     if (!m_network.Start(PORT))
-    {
         return false;
-    }
 
-    // --- SYSTEMS ---
     AddSystem<AuthenticationSystem>()->Init(this);
     AddSystem<ChatSystem>()->Init(this);
     AddSystem<MiniGameSystem>()->Init(this);
@@ -45,7 +46,6 @@ void GameServer::Run()
 
         m_network.PollEvents();
         
-        // Update Systems
         for (auto& sys : m_systems)
         {
             sys->Update(dt);
@@ -55,7 +55,6 @@ void GameServer::Run()
     }
 }
 
-// HandlePacket logic moved to NetworkServer and Systems
 
 PlayerInfo* GameServer::GetPlayerByAddr(const sockaddr_in& addr)
 {
@@ -86,7 +85,19 @@ void GameServer::RemovePlayer(const sockaddr_in& addr)
         leavePkt.Pseudo = it->pseudo;
         Broadcast(leavePkt, &addr);
         
+        bool wasAdmin = it->isAdmin;
         m_players.erase(it);
+
+        if (wasAdmin && !m_players.empty())
+        {
+            m_players[0].isAdmin = true;
+            std::cout << "Nouveau ADMIN designe : " << m_players[0].pseudo << std::endl;
+
+            PacketChat adminMsg;
+            adminMsg.Sender = "SYSTEM";
+            adminMsg.Message = m_players[0].pseudo + " est desormais l'ADMIN.";
+            Broadcast(adminMsg);
+        }
     }
 }
 
@@ -104,4 +115,8 @@ void GameServer::Broadcast(const IPacket& pkt, const sockaddr_in* senderToIgnore
 void GameServer::SendTo(const sockaddr_in& target, const IPacket& pkt)
 {
     m_network.SendTo(pkt, target);
+}
+
+void GameServer::HandlePacket(GamePacket& pkt, const sockaddr_in& sender)
+{
 }
