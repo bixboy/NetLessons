@@ -1,30 +1,15 @@
 #pragma once
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <enet/enet.h>
 #include <vector>
 #include <string>
 #include <cstring>
 #include <stdexcept>
 #include <bit>
 
-#pragma comment(lib, "ws2_32.lib")
-
 const int PORT = 55555;
-const int MAX_PACKET_SIZE = 4096;
 const int TIMEOUT_SECONDS = 5;
 
-enum class PacketType_Legacy : int
-{
-    Connect = 0,
-    Disconnect = 1,
-    Chat = 2,
-    GameStart = 3,
-    GameData = 4,
-    Win = 5,
-    Lose = 6,
-    Ping = 7,
-    PlayerList = 8
-};
+// Enum Legacy supprimé (non utilisé par le nouveau système de Packet)
 
 class GamePacket
 {
@@ -93,6 +78,12 @@ public:
     {
         uint16_t size = 0;
         *this >> size;
+        
+        if (size == 0)
+        {
+            data.clear();
+            return *this;
+        }
         
         if (m_readPos + size > m_buffer.size()) 
             throw std::runtime_error("[GamePacket] Buffer Underflow: String trop longue.");

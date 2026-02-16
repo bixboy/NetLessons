@@ -11,5 +11,6 @@ public:
 
     virtual void Init(GameServer* server) = 0;
     virtual void Update(float dt) {}
+    virtual void OnPlayerConnect(PlayerInfo* player) {}
     virtual void OnPlayerDisconnect(PlayerInfo* player) {}
 };

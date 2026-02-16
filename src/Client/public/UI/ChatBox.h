@@ -4,7 +4,7 @@
 #include <deque>
 #include <string>
 #include <functional>
-#include <mutex>
+
 #include <optional>
 
 enum class MessageType
@@ -90,5 +90,5 @@ private:
     float m_lineHeight;
     
     std::function<void(const std::string&)> m_onSend;
-    std::mutex m_mutex;
+
 };

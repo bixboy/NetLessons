@@ -11,64 +11,68 @@
 void ChatSystem::Init(GameServer* server)
 {
     // --- CHAT PACKET ---
-    server->GetNetwork().OnPacket(OpCode::Chat, [server](GamePacket& rawPkt, const sockaddr_in& sender) 
+    server->GetNetwork().OnPacket(OpCode::Chat, [server](GamePacket& rawPkt, ENetPeer* sender) 
     {
         PacketChat pkt;
         pkt.Deserialize(rawPkt);
 
-        PlayerInfo* player = server->GetPlayerByAddr(sender);
-        if (player) 
-        {
-            player->lastPacketTime = std::chrono::steady_clock::now();
+        PlayerInfo* player = server->GetPlayerByPeer(sender);
+        if (!player) 
+            return;
+
+        player->lastPacketTime = std::chrono::steady_clock::now();
+        
+        // Validate message length
+        if (pkt.Message.empty() || pkt.Message.size() > 500)
+            return;
             
-            if (server->GetCommandManager().ProcessCommand(player, pkt.Message))
+        if (server->GetCommandManager().ProcessCommand(player, pkt.Message))
+            return;
+
+        // Private Message
+        if (!pkt.Target.empty())
+        {
+            PlayerInfo* target = nullptr;
+            for (auto& [peer, info] : server->GetPlayers())
             {
-                return;
+                if (info.pseudo == pkt.Target)
+                {
+                    target = &info;
+                    break;
+                }
             }
 
-            // Private Message
-            if (!pkt.Target.empty())
+            if (target)
             {
-                auto& players = server->GetPlayers();
-                auto it = std::find_if(players.begin(), players.end(), [&](const PlayerInfo& p) {
-                    return p.pseudo == pkt.Target; 
-                });
+                PacketChat pm;
+                pm.Sender = player->pseudo;
+                pm.Message = pkt.Message;
+                pm.Target = target->pseudo;
+                pm.ChannelName = pkt.ChannelName;
+                server->SendTo(target->peer, pm);
+                server->SendTo(player->peer, pm);
 
-                if (it != players.end())
-                {
-                    // To Recipient
-                    PacketChat pm;
-                    pm.Sender = player->pseudo;
-                    pm.Message = pkt.Message;
-                    pm.Target = it->pseudo;
-                    pm.ChannelName = pkt.ChannelName;
-                    server->SendTo(it->address, pm);
-
-                    // To Sender
-                    server->SendTo(player->address, pm);
-
-                    std::cout << "[WHISPER] " << player->pseudo << " -> " << it->pseudo << ": " << pkt.Message << std::endl;
-                }
-                else
-                {
-                    PacketChat errorMsg;
-                    errorMsg.Sender = "SYSTEM";
-                    errorMsg.Message = "Joueur introuvable : " + pkt.Target;
-                    errorMsg.ChannelName = "System";
-                    server->SendTo(player->address, errorMsg);
-                }
+                std::cout << "[WHISPER] " << player->pseudo << " -> " << target->pseudo << ": " << pkt.Message << std::endl;
             }
             else
             {
-                // GLOBAL BROADCAST
-                std::cout << "[CHAT] " << player->pseudo << ": " << pkt.Message << std::endl;
-
-                PacketChat broadcastChat;
-                broadcastChat.Sender = player->pseudo;
-                broadcastChat.Message = pkt.Message;
-                broadcastChat.ChannelName = pkt.ChannelName;
-                server->Broadcast(broadcastChat);
+                PacketChat errorMsg;
+                errorMsg.Sender = "SYSTEM";
+                errorMsg.Message = "Joueur introuvable : " + pkt.Target;
+                errorMsg.ChannelName = "System";
+                server->SendTo(player->peer, errorMsg);
             }
+        }
+        else
+        {
+            // GLOBAL BROADCAST
+            std::cout << "[CHAT] " << player->pseudo << ": " << pkt.Message << std::endl;
+
+            PacketChat broadcastChat;
+            broadcastChat.Sender = player->pseudo;
+            broadcastChat.Message = pkt.Message;
+            broadcastChat.ChannelName = pkt.ChannelName;
+            server->Broadcast(broadcastChat);
         }
     });
 
@@ -81,18 +85,22 @@ void ChatSystem::Init(GameServer* server)
         PacketChat helpMsg;
         helpMsg.Sender = "SYSTEM";
         helpMsg.Message = "Commandes : /help, /kick <pseudo>, /stop, /start";
-        server->SendTo(player->address, helpMsg);
+        server->SendTo(player->peer, helpMsg);
     });
 
     server->GetCommandManager().RegisterCommand("kick", [server](PlayerInfo* requester, const std::vector<std::string>& args) 
     {
-         if (!requester || !requester->isAdmin) 
+         // Fix: check nullptr BEFORE dereferencing
+         if (!requester)
+             return;
+             
+         if (!requester->isAdmin) 
          {
              PacketChat msg; 
              msg.Sender = "SYSTEM"; 
              msg.Message = "Erreur: Vous n'etes pas ADMIN.";
              msg.ChannelName = "System";
-             server->SendTo(requester->address, msg);
+             server->SendTo(requester->peer, msg);
              return;
          }
 
@@ -100,15 +108,20 @@ void ChatSystem::Init(GameServer* server)
             return;
 
          std::string targetName = args[0];
-         auto& players = server->GetPlayers();
-        
-         auto it = std::find_if(players.begin(), players.end(), 
-            [&](const PlayerInfo& p)
-            {
-                return p.pseudo == targetName; 
-            });
+         
+         PlayerInfo* target = nullptr;
+         ENetPeer* targetPeer = nullptr;
+         for (auto& [peer, info] : server->GetPlayers())
+         {
+             if (info.pseudo == targetName)
+             {
+                 target = &info;
+                 targetPeer = peer;
+                 break;
+             }
+         }
 
-         if (it != players.end())
+         if (target)
          {
              PacketChat kickMsg;
              kickMsg.Sender = "SYSTEM";
@@ -116,7 +129,7 @@ void ChatSystem::Init(GameServer* server)
              kickMsg.ChannelName = "System";
              server->Broadcast(kickMsg);
 
-             server->RemovePlayer(it->address);
+             server->RemovePlayer(targetPeer);
          }
     });
 }

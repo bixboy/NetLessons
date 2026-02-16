@@ -1,4 +1,4 @@
-#include "ChatBox.h"
+#include "UI/ChatBox.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -123,7 +123,6 @@ std::string ChatBox::GetPrefixForType(MessageType type) const
 
 void ChatBox::AddChannel(const std::string& name)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
     for (const auto& t : m_tabs)
     {
         if (t.name == name) 
@@ -135,7 +134,6 @@ void ChatBox::AddChannel(const std::string& name)
 
 void ChatBox::SetActiveChannel(const std::string& name)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
     m_activeChannel = name;
     
     for (auto& t : m_tabs) 
@@ -150,8 +148,6 @@ void ChatBox::SetActiveChannel(const std::string& name)
 
 void ChatBox::AddMessage(const std::string& channel, const std::string& sender, const std::string& content, MessageType type, std::optional<sf::Color> customColor)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
     if (!m_font)
         return;
 
@@ -291,6 +287,13 @@ void ChatBox::UpdateLayout()
     if (m_scrollOffset > (int)activeTab->messages.size() - 5) 
          m_scrollOffset = std::max(0, (int)activeTab->messages.size() - 5);
 
+    // Reset positions to hide everything by default (fixes ghosting)
+    for (auto& msg : activeTab->messages)
+    {
+        msg.prefixObj.setPosition({-10000.f, -10000.f});
+        msg.textObj.setPosition({-10000.f, -10000.f});
+    }
+
     auto itStart = activeTab->messages.rbegin() + m_scrollOffset;
     auto itEnd = activeTab->messages.rend();
 
@@ -346,7 +349,6 @@ void ChatBox::HandleInput(const sf::Event& event)
                 if (m_isMinimized) 
                     return;
                 
-                std::lock_guard<std::mutex> lock(m_mutex);
                 for (const auto& tab : m_tabs)
                 {
                     sf::Text temp(*m_font);
@@ -480,8 +482,6 @@ void ChatBox::HandleInput(const sf::Event& event)
 
 void ChatBox::Draw(sf::RenderWindow& window)
 {
-    std::scoped_lock lock(m_mutex);
-
     // draw minimize
     window.draw(m_minimizeBtn);
     if(m_minimizeText) 

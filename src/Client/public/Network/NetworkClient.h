@@ -1,11 +1,8 @@
 #pragma once
+#include "NetworkCommon.h"
 #include "PacketSystem.h"
 #include <functional>
 #include <map>
-#include <queue>
-#include <mutex>
-#include <thread>
-#include <atomic>
 #include <iostream>
 
 
@@ -32,22 +29,12 @@ public:
     void SetOnDisconnect(std::function<void(const std::string&)> handler) { m_onDisconnect = handler; }
 
 private:
-    void ReceiveLoop();
-    void PushPacket(GamePacket pkt);
-
-    // Threading
-    std::thread m_receiveThread;
-    std::queue<GamePacket> m_packetQueue;
-    std::mutex m_queueMutex;
-    
     // Handlers
     std::map<OpCode, PacketHandler> m_handlers;
     std::function<void(const std::string&)> m_onDisconnect;
     
-    // Socket data
-    SOCKET m_socket;
-    sockaddr_in m_serverAddr;
-    int m_serverAddrLen;
-    std::atomic<bool> m_isConnected;
-    std::atomic<bool> m_shouldRun;
+    // ENet data
+    ENetHost* m_client = nullptr;
+    ENetPeer* m_peer = nullptr;
+    bool m_isConnected = false;
 };

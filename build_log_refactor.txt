@@ -1,0 +1,41 @@
+﻿[0m[38;2;0;255;0;1m[ 12%]:[0m compiling.release src\Client\ClientMain.cpp[0m
+[0m[38;2;0;255;0;1m[ 15%]:[0m compiling.release src\Client\private\Avatars\AvatarManager.cpp[0m
+[0m[38;2;0;255;0;1m[ 21%]:[0m compiling.release src\Client\private\GameClient.cpp[0m
+[0m[38;2;0;255;0;1m[ 27%]:[0m compiling.release src\Client\private\Network\NetworkClient.cpp[0m
+[0m[38;2;0;255;0;1m[ 30%]:[0m compiling.release src\Client\private\Screens\ScreenGame.cpp[0m
+[0m[38;2;0;255;0;1m[ 33%]:[0m compiling.release src\Client\private\Screens\ScreenIpConfig.cpp[0m
+[0m[38;2;0;255;0;1m[ 36%]:[0m compiling.release src\Client\private\Screens\ScreenLobby.cpp[0m
+[0m[38;2;0;255;0;1m[ 39%]:[0m compiling.release src\Client\private\Screens\ScreenLogin.cpp[0m
+[0m[38;2;0;255;0;1m[ 42%]:[0m compiling.release src\Client\private\Screens\ScreenResult.cpp[0m
+[0m[38;2;0;255;0;1m[ 49%]:[0m compiling.release src\Client\private\UI\UIRenderer.cpp[0m
+[0m[38;2;0;255;0;1m[ 58%]:[0m compiling.release src\Server\private\Core\GameServer.cpp[0m
+[0m[38;2;0;255;0;1m[ 61%]:[0m compiling.release src\Server\private\NetworkServer.cpp[0m
+[0m[38;2;0;255;0;1m[ 64%]:[0m compiling.release src\Server\private\Systems\AuthenticationSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 67%]:[0m compiling.release src\Server\private\Systems\ChatSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 70%]:[0m compiling.release src\Server\private\Systems\MiniGameSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 73%]:[0m compiling.release src\Server\private\Systems\MovementSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 76%]:[0m compiling.release src\Server\ServerMain.cpp[0m
+[0m[1;38;2;255;0;0;1merror: [0mMiniGameSystem.cpp
+src\Server\public\Systems/MiniGameSystem.h(23): error C2061: erreur de syntaxe : identificateur 'EPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(20): error C2511: 'void MiniGameSystem::SetPlayerState(PlayerInfo &,EPlayerState)' : impossible de trouver la fonction membre surchargée dans 'MiniGameSystem'
+src\Server\public\Systems/MiniGameSystem.h(8): note: voir la déclaration de 'MiniGameSystem'
+src\Server\private\Systems\MiniGameSystem.cpp(47): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(47): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+src\Server\private\Systems\MiniGameSystem.cpp(91): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(91): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+src\Server\private\Systems\MiniGameSystem.cpp(131): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(131): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+src\Server\private\Systems\MiniGameSystem.cpp(151): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(151): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+src\Server\private\Systems\MiniGameSystem.cpp(379): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(379): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+src\Server\private\Systems\MiniGameSystem.cpp(441): error C2660: 'MiniGameSystem::SetPlayerState' : la fonction ne prend pas 2 arguments
+src\Server\public\Systems/MiniGameSystem.h(23): note: voir la déclaration de 'MiniGameSystem::SetPlayerState'
+src\Server\private\Systems\MiniGameSystem.cpp(441): note: lors de la tentative de mise en correspondance de la liste des arguments '(PlayerInfo, EPlayerState)'
+
+  [38;2;255;255;0m> in [1msrc\Server\private\Systems\MiniGameSystem.cpp[0m

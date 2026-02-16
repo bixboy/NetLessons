@@ -1,19 +1,11 @@
 #pragma once
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <enet/enet.h>
 #include <vector>
 #include <string>
 #include <functional>
 #include <map>
-#include <queue>
-#include <thread>
-#include <mutex>
-#include <atomic>
-
-
 
 #include "PacketSystem.h"
-#pragma comment(lib, "ws2_32.lib")
 
 class NetworkServer
 {
@@ -24,28 +16,22 @@ public:
     bool Start(unsigned short port);
     void Stop();
 
-    void SendTo(const GamePacket& packet, const sockaddr_in& address);
-    void SendTo(const IPacket& packet, const sockaddr_in& address);
+    void Broadcast(const GamePacket& packet, ENetPeer* excluded = nullptr);
+    void Broadcast(const IPacket& packet, ENetPeer* excluded = nullptr);
+    void SendTo(const GamePacket& packet, ENetPeer* peer);
+    void SendTo(const IPacket& packet, ENetPeer* peer);
     void PollEvents();
 
-    using PacketHandler = std::function<void(GamePacket&, const sockaddr_in&)>;
+    using PacketHandler = std::function<void(GamePacket&, ENetPeer*)>;
     void OnPacket(OpCode type, PacketHandler handler);
 
+    // Callbacks système de haut niveau
+    std::function<void(ENetPeer*)> OnConnect;
+    std::function<void(ENetPeer*)> OnDisconnect;
+
 private:
-    void ReceiveLoop();
-
-    SOCKET m_socket;
-    sockaddr_in m_serverAddr;
-    std::atomic<bool> m_isRunning;
-    std::thread m_receiveThread;
-
-    struct ReceivedPacket
-    {
-        GamePacket packet;
-        sockaddr_in sender;
-    };
-
-    std::mutex m_mutex;
-    std::queue<ReceivedPacket> m_packetQueue;
+    ENetHost* m_host = nullptr;
     std::map<OpCode, PacketHandler> m_handlers;
 };
+
+

@@ -5,50 +5,77 @@
 
 #include <iostream>
 #include <chrono>
-#include <cstdlib> // rand
+#include <vector>
 
 
 void AuthenticationSystem::Init(GameServer* s)
 {
-    this->server = s;
+    m_server = s;
 
     // --- CONNECT ---
-    server->GetNetwork().OnPacket(OpCode::ConnectionState, 
-    [s](GamePacket& rawPkt, const sockaddr_in& sender)
+    m_server->GetNetwork().OnPacket(OpCode::ConnectionState, 
+    [this](GamePacket& rawPkt, ENetPeer* sender)
     {
         PacketConnectionState pkt;
         pkt.Deserialize(rawPkt);
 
-        PlayerInfo* player = s->GetPlayerByAddr(sender);
+        PlayerInfo* player = m_server->GetPlayerByPeer(sender);
         
         // LOGIN
         if (pkt.IsConnected) 
         {
+            // Validation: pseudo length
+            if (pkt.Pseudo.empty() || pkt.Pseudo.size() > 15)
+            {
+                PacketChat errorMsg;
+                errorMsg.Sender = "SYSTEM";
+                errorMsg.Message = "Pseudo invalide (1-15 caracteres).";
+                errorMsg.ChannelName = "System";
+                m_server->SendTo(sender, errorMsg);
+                return;
+            }
+
+            // Validation: duplicate pseudo
+            for (const auto& [peer, info] : m_server->GetPlayers())
+            {
+                if (info.pseudo == pkt.Pseudo && peer != sender)
+                {
+                    PacketChat errorMsg;
+                    errorMsg.Sender = "SYSTEM";
+                    errorMsg.Message = "Ce pseudo est deja utilise.";
+                    errorMsg.ChannelName = "System";
+                    m_server->SendTo(sender, errorMsg);
+                    return;
+                }
+            }
+
             if (!player)
             {
                 PlayerInfo newP;
-                newP.address = sender;
+                newP.peer = sender;
                 newP.pseudo = pkt.Pseudo;
                 newP.lastPacketTime = std::chrono::steady_clock::now();
-                newP.colorID = rand() % 8; // 8 couleurs disponibles
+                newP.colorID = static_cast<uint8_t>(m_colorDist(m_rng));
                 
-                auto& players = s->GetPlayers();
+                auto& players = m_server->GetPlayers();
                 if (players.empty())
                 {
                     newP.isAdmin = true;
                     std::cout << "Premier joueur " << pkt.Pseudo << " devient ADMIN." << std::endl;
                 }
 
-                for (const auto& p : players)
+                // Send existing player list to the newcomer
+                for (const auto& [peer, info] : players)
                 {
                     PacketPlayerList existingPkt;
-                    existingPkt.Pseudo = p.pseudo;
-                    existingPkt.ColorID = p.colorID;
-                    s->SendTo(sender, existingPkt);
+                    existingPkt.Pseudo = info.pseudo;
+                    existingPkt.ColorID = info.colorID;
+                    existingPkt.State = info.playerState;
+                    m_server->SendTo(sender, existingPkt);
                 }
 
-                players.push_back(newP);
-                player = &players.back();
+                auto [it, inserted] = players.emplace(sender, newP);
+                player = &it->second;
                 std::cout << "Nouveau joueur : " << pkt.Pseudo << " (Admin: " << newP.isAdmin << ")" << std::endl;
             }
             else
@@ -60,53 +87,52 @@ void AuthenticationSystem::Init(GameServer* s)
             joinPkt.IsConnected = true;
             joinPkt.Pseudo = pkt.Pseudo;
             joinPkt.ColorID = player->colorID;
-            s->Broadcast(joinPkt, &sender);
+            m_server->Broadcast(joinPkt, sender);
+
+            // Notify systems
+            m_server->NotifyPlayerConnect(player);
         }
         else // LOGOUT
         {
-             s->RemovePlayer(sender);
+             m_server->RemovePlayer(sender);
         }
     });
 
     // --- PING ---
-    server->GetNetwork().OnPacket(OpCode::Ping, 
-    [s](GamePacket& rawPkt, const sockaddr_in& sender) 
+    m_server->GetNetwork().OnPacket(OpCode::Ping, 
+    [this](GamePacket& rawPkt, ENetPeer* sender) 
     {
-        PlayerInfo* player = s->GetPlayerByAddr(sender);
+        PlayerInfo* player = m_server->GetPlayerByPeer(sender);
         if (player) 
         {
             player->lastPacketTime = std::chrono::steady_clock::now();
         }
 
-        // Always reply with Pong to keep client socket alive during login phase
         PacketPing pong;
-        s->SendTo(sender, pong);
+        m_server->SendTo(sender, pong);
     });
 }
 
 void AuthenticationSystem::Update(float dt)
 {
-    auto& players = server->GetPlayers();
+    auto& players = m_server->GetPlayers();
     auto now = std::chrono::steady_clock::now();
     
-    for (auto it = players.begin(); it != players.end();)
+    // Collect timed-out peers to avoid iterator invalidation
+    std::vector<ENetPeer*> timedOut;
+    for (const auto& [peer, info] : players)
     {
-        // ---- timeout ----
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - it->lastPacketTime);
+        auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - info.lastPacketTime);
         if (duration.count() > TIMEOUT_SECONDS)
         {
-            std::cout << "Timeout : " << it->pseudo << " Duration: " << duration.count() << "s" << std::endl;
-            
-            PacketConnectionState leavePkt;
-            leavePkt.IsConnected = false;
-            leavePkt.Pseudo = it->pseudo;
-            server->Broadcast(leavePkt, &it->address);
-            
-            it = players.erase(it);
+            std::cout << "Timeout : " << info.pseudo << " Duration: " << duration.count() << "s" << std::endl;
+            timedOut.push_back(peer);
         }
-        else
-        {
-            ++it;
-        }
+    }
+    
+    for (auto* peer : timedOut)
+    {
+        enet_peer_disconnect_now(peer, 0);
+        m_server->RemovePlayer(peer);
     }
 }

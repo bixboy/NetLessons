@@ -1,0 +1,26 @@
+﻿[0m[38;2;0;255;0;1m[ 12%]:[0m compiling.release src\Client\ClientMain.cpp[0m
+[0m[38;2;0;255;0;1m[ 15%]:[0m compiling.release src\Client\private\Avatars\AvatarManager.cpp[0m
+[0m[38;2;0;255;0;1m[ 21%]:[0m compiling.release src\Client\private\GameClient.cpp[0m
+[0m[38;2;0;255;0;1m[ 30%]:[0m compiling.release src\Client\private\Screens\ScreenGame.cpp[0m
+[0m[38;2;0;255;0;1m[ 33%]:[0m compiling.release src\Client\private\Screens\ScreenIpConfig.cpp[0m
+[0m[38;2;0;255;0;1m[ 36%]:[0m compiling.release src\Client\private\Screens\ScreenLobby.cpp[0m
+[0m[38;2;0;255;0;1m[ 39%]:[0m compiling.release src\Client\private\Screens\ScreenLogin.cpp[0m
+[0m[38;2;0;255;0;1m[ 42%]:[0m compiling.release src\Client\private\Screens\ScreenResult.cpp[0m
+[0m[38;2;0;255;0;1m[ 49%]:[0m compiling.release src\Client\private\UI\UIRenderer.cpp[0m
+[0m[38;2;0;255;0;1m[ 58%]:[0m compiling.release src\Server\private\Core\GameServer.cpp[0m
+[0m[38;2;0;255;0;1m[ 64%]:[0m compiling.release src\Server\private\Systems\AuthenticationSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 67%]:[0m compiling.release src\Server\private\Systems\ChatSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 70%]:[0m compiling.release src\Server\private\Systems\MiniGameSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 73%]:[0m compiling.release src\Server\private\Systems\MovementSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 76%]:[0m compiling.release src\Server\ServerMain.cpp[0m
+[0m[1;38;2;255;0;0;1merror: [0mGameClient.cpp
+src\Client\private\GameClient.cpp(74): error C3878: erreur de syntaxe : jeton inattendu « ) » après « compound-statement »
+src\Client\private\GameClient.cpp(74): error C3878: erreur de syntaxe : jeton inattendu « ) » après « statement »
+src\Client\private\GameClient.cpp(74): error C3878: erreur de syntaxe : jeton inattendu « ) » après « selection-statement »
+src\Client\private\GameClient.cpp(296): error C2062: type 'void' inattendu
+src\Client\private\GameClient.cpp(297): error C2143: erreur de syntaxe : absence de ';' avant '{'
+src\Client\private\GameClient.cpp(306): error C2601: 'GameClient::Run' : définitions de fonctions locales non conformes
+src\Client\private\GameClient.cpp(29): note: cette ligne comporte un '{' qui n'est pas équilibré
+src\Client\private\GameClient.cpp(29): fatal error C1075: '{' : jeton correspondant introuvable
+
+  [38;2;255;255;0m> in [1msrc\Client\private\GameClient.cpp[0m

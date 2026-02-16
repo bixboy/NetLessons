@@ -10,10 +10,33 @@ enum class OpCode : int
     GameStart = 2,
     GameData = 3,
     GameResult = 4,
-    Ping = 7,
-    PlayerList = 6,
-    PlayerState = 8,
-    GameEnd = 9
+    PlayerList = 5,
+    Ping = 6,
+    PlayerState = 7,
+    GameEnd = 8,
+    PlayerInput = 9,
+    PlayerPosition = 10,
+    PlayerAction = 11
+};
+
+
+// Player lifecycle state (shared by server & client)
+enum class EPlayerState : uint8_t
+{
+    Lobby      = 0,
+    Playing    = 1,
+    Spectating = 2
+};
+
+
+// Sub-types carried inside PacketGameData::Value
+enum class EGameDataType : int
+{
+    JustePrixHintUp   = 1,   // "Plus haut"
+    JustePrixHintDown = 2,   // "Plus bas"
+    BombState         = 10,  // Bomb holder + timer
+    BombElimination   = 11,  // Player eliminated
+    GameStateChanged  = 20   // Game running / stopped
 };
 
 
@@ -97,7 +120,17 @@ struct PacketChat : PacketBase<OpCode::Chat>
 // ==== Start Game Packet ====
 struct PacketGameStart : PacketBase<OpCode::GameStart>
 {
-    // No payload
+    uint8_t GameID = 0; // 0 = Le Juste Prix
+
+    void WritePayload(GamePacket& packet) const override
+    {
+        packet << GameID;
+    }
+
+    void ReadPayload(GamePacket& packet) override
+    {
+        packet >> GameID;
+    }
 };
 
 
@@ -105,15 +138,17 @@ struct PacketGameStart : PacketBase<OpCode::GameStart>
 struct PacketGameData : PacketBase<OpCode::GameData>
 {
     int Value = 0;
+    std::string ExtraData;  // Bomb holder pseudo / eliminated pseudo
+    float Timer = 0.f;      // Bomb timer remaining
 
     void WritePayload(GamePacket& packet) const override
     {
-        packet << Value;
+        packet << Value << ExtraData << Timer;
     }
 
     void ReadPayload(GamePacket& packet) override
     {
-        packet >> Value;
+        packet >> Value >> ExtraData >> Timer;
     }
 };
 
@@ -147,32 +182,38 @@ struct PacketPlayerList : PacketBase<OpCode::PlayerList>
 {
     std::string Pseudo;
     uint8_t ColorID = 0;
+    EPlayerState State = EPlayerState::Lobby;
 
     void WritePayload(GamePacket& packet) const override
     {
-        packet << Pseudo << ColorID;
+        packet << Pseudo << ColorID << static_cast<uint8_t>(State);
     }
 
     void ReadPayload(GamePacket& packet) override
     {
-        packet >> Pseudo >> ColorID;
+        uint8_t s = 0;
+        packet >> Pseudo >> ColorID >> s;
+        State = static_cast<EPlayerState>(s);
     }
 };
 
 
-// ==== Player State Packet (Spectator) ====
+// ==== Player State Packet ====
 struct PacketPlayerState : PacketBase<OpCode::PlayerState>
 {
-    bool IsSpectator = false;
+    std::string Pseudo;
+    EPlayerState State = EPlayerState::Lobby;
 
     void WritePayload(GamePacket& packet) const override
     {
-        packet << IsSpectator;
+        packet << Pseudo << static_cast<uint8_t>(State);
     }
 
     void ReadPayload(GamePacket& packet) override
     {
-        packet >> IsSpectator;
+        uint8_t s = 0;
+        packet >> Pseudo >> s;
+        State = static_cast<EPlayerState>(s);
     }
 };
 
@@ -181,4 +222,60 @@ struct PacketPlayerState : PacketBase<OpCode::PlayerState>
 struct PacketGameEnd : PacketBase<OpCode::GameEnd>
 {
     // Forces return to lobby
+};
+
+
+// ==== Player Input Packet (Client -> Server) ====
+struct PacketPlayerInput : PacketBase<OpCode::PlayerInput>
+{
+    int8_t DirX = 0;  // -1, 0, +1
+    int8_t DirY = 0;
+    bool Push = false;
+
+    void WritePayload(GamePacket& packet) const override
+    {
+        packet << DirX << DirY << Push;
+    }
+
+    void ReadPayload(GamePacket& packet) override
+    {
+        packet >> DirX >> DirY >> Push;
+    }
+};
+
+
+// ==== Player Position Packet (Server -> Clients) ====
+struct PacketPlayerPosition : PacketBase<OpCode::PlayerPosition>
+{
+    std::string Pseudo;
+    float X = 0.f;
+    float Y = 0.f;
+
+    void WritePayload(GamePacket& packet) const override
+    {
+        packet << Pseudo << X << Y;
+    }
+
+    void ReadPayload(GamePacket& packet) override
+    {
+        packet >> Pseudo >> X >> Y;
+    }
+};
+
+
+// ==== Player Action Packet (Server -> Clients) ====
+struct PacketPlayerAction : PacketBase<OpCode::PlayerAction>
+{
+    std::string Pseudo;
+    uint8_t ActionType = 0; // 0 = Push, 1 = Hit, etc.
+
+    void WritePayload(GamePacket& packet) const override
+    {
+        packet << Pseudo << ActionType;
+    }
+
+    void ReadPayload(GamePacket& packet) override
+    {
+        packet >> Pseudo >> ActionType;
+    }
 };

@@ -77,6 +77,9 @@ xmake version 3.0.4+master.b703ec328
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\MiniGameSystem.h">
       <Filter>src\Server\public\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Systems\MovementSystem.h">
+      <Filter>src\Server\public\Systems</Filter>
+    </ClInclude>
 
 
   </ItemGroup>
@@ -101,6 +104,9 @@ xmake version 3.0.4+master.b703ec328
       <Filter>src\Server\private\Systems</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\MiniGameSystem.cpp">
+      <Filter>src\Server\private\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Systems\MovementSystem.cpp">
       <Filter>src\Server\private\Systems</Filter>
     </ClCompile>
 

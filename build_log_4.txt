@@ -1,0 +1,8 @@
+﻿[0m[38;2;0;255;0;1m[ 15%]:[0m compiling.release src\Client\private\Avatars\AvatarManager.cpp[0m
+[0m[38;2;0;255;0;1m[ 21%]:[0m compiling.release src\Client\private\GameClient.cpp[0m
+[0m[38;2;0;255;0;1m[ 30%]:[0m compiling.release src\Client\private\Screens\ScreenGame.cpp[0m
+[0m[38;2;0;255;0;1m[ 36%]:[0m compiling.release src\Client\private\Screens\ScreenLobby.cpp[0m
+[0m[38;2;0;255;0;1m[ 70%]:[0m compiling.release src\Server\private\Systems\MiniGameSystem.cpp[0m
+[0m[38;2;0;255;0;1m[ 82%]:[0m [38;2;255;0;255;1mlinking.release Server.exe[0m
+[0m[38;2;0;255;0;1m[ 88%]:[0m [38;2;255;0;255;1mlinking.release Client.exe[0m
+[0m[38;2;0;255;0;1m[100%]:[0m [38;2;0;255;0;1mbuild ok, spent 2.563s[0m

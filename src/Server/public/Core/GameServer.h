@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include <chrono>
 #include <string>
+#include <functional>
 
 #include "Systems/IServerSystem.h"
 #include "NetworkServer.h"
@@ -14,12 +16,24 @@ class CommandManager;
 
 struct PlayerInfo
 {
-    sockaddr_in address = {};
+    ENetPeer* peer = nullptr;
     std::string pseudo = "";
     std::chrono::steady_clock::time_point lastPacketTime = {};
     bool isAdmin = false;
     uint8_t colorID = 0;
-    bool isSpectator = false;
+    EPlayerState playerState = EPlayerState::Lobby;
+
+    // Movement (server-authoritative, normalized 0.0-1.0)
+    float posX = 0.5f;
+    float posY = 0.5f;
+    int8_t inputDirX = 0;
+    int8_t inputDirY = 0;
+    bool requestPush = false;
+    
+    // Physics & PvP
+    float velocityX = 0.f;
+    float velocityY = 0.f;
+    float pushCooldown = 0.f; // Seconds
 };
 
 class GameServer
@@ -33,7 +47,7 @@ public:
 
     NetworkServer& GetNetwork() { return m_network; }
     CommandManager& GetCommandManager() { return m_commandManager; }
-    std::vector<PlayerInfo>& GetPlayers() { return m_players; }
+    std::unordered_map<ENetPeer*, PlayerInfo>& GetPlayers() { return m_players; }
 
     template <typename T>
     T* AddSystem()
@@ -44,19 +58,21 @@ public:
         return systemPtr;
     }
 
-    void Broadcast(const IPacket& pkt, const sockaddr_in* senderToIgnore = nullptr);
-    void SendTo(const sockaddr_in& target, const IPacket& pkt);
+    void Broadcast(const IPacket& pkt, ENetPeer* senderToIgnore = nullptr);
+    void SendTo(ENetPeer* target, const IPacket& pkt);
     
-    PlayerInfo* GetPlayerByAddr(const sockaddr_in& addr);
-    void RemovePlayer(const sockaddr_in& addr);
+    PlayerInfo* GetPlayerByPeer(ENetPeer* peer);
+    void RemovePlayer(ENetPeer* peer);
+    void NotifyPlayerConnect(PlayerInfo* player);
+
+    // Push event callback (used by MiniGameSystem for bomb transfer)
+    std::function<void(const std::string& pusher, const std::string& target)> OnPushHit;
 
 private:
-    void HandlePacket(GamePacket& pkt, const sockaddr_in& sender);
-    
     NetworkServer m_network;
     CommandManager m_commandManager;
     
-    std::vector<PlayerInfo> m_players;
+    std::unordered_map<ENetPeer*, PlayerInfo> m_players;
 
     std::vector<std::unique_ptr<IServerSystem>> m_systems;
 };

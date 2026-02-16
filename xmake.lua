@@ -2,21 +2,22 @@ add_rules("mode.debug", "mode.release")
 
 set_languages("c++20")
 add_requires("sfml 3.0.1")
+add_requires("enet")
 
 if is_plat("windows") then
-    add_syslinks("ole32") 
+    add_syslinks("ole32")
+    add_syslinks("winmm")
+    add_syslinks("ws2_32")
 end
 
 target("CommonNet")
     set_kind("static")
     on_install(function (target) end)
     
+    add_packages("enet", {public = true})
+    
     add_headerfiles("src/CommonNet/**.h")
     add_includedirs("src/CommonNet", {public = true})
-    
-    if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", {public = true}) 
-    end
 
 -- Le Serveur
 target("Server")
