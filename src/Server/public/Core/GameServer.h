@@ -47,7 +47,7 @@ public:
     GameServer();
     ~GameServer();
 
-    bool Initialize();
+    bool Initialize(int port);
     void Run();
 
     NetworkServer& GetNetwork() { return m_network; }

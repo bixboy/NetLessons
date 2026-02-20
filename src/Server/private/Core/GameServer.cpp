@@ -21,9 +21,9 @@ GameServer::~GameServer()
 {
 }
 
-bool GameServer::Initialize()
+bool GameServer::Initialize(int port)
 {
-    if (!m_network.Start(PORT))
+    if (!m_network.Start(port))
         return false;
         
     m_network.OnDisconnect = [this](ENetPeer* peer)

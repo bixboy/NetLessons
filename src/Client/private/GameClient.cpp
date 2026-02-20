@@ -93,7 +93,6 @@ void GameClient::SetupNetworkHandlers()
                 }
             } else if (pkt.Value == static_cast<int>(EGameDataType::PlayerFinished)) {
                 m_chat.AddMessage("System", "", pkt.ExtraData + " a fini !", MessageType::Success);
-                m_ctx.Sound.Play(SoundType::Win);
             } else if (pkt.Value == static_cast<int>(EGameDataType::IceModeOn)) {
                 m_ctx.IsIceMode = true;
                 m_avatars.SetIceMode(true);
@@ -179,7 +178,6 @@ void GameClient::SetupNetworkHandlers()
         if (pkt.WinnerName == m_ctx.PseudoInput)
         {
             m_ctx.WinnerName = "TOI !";
-            m_ctx.Sound.Play(SoundType::Win);
             m_chat.AddMessage("Global", "", "Félicitations, tu as gagné !", MessageType::Success);
         }
         else
@@ -586,10 +584,6 @@ void GameClient::Run()
             m_avatars.Draw(m_ctx.Font);
         }
 
-        if (m_ctx.State != ClientState::IpConfig && m_ctx.State != ClientState::Login)
-        {
-            m_chat.Draw(m_ctx.Window);
-        }
         
         // --- DEATH SCREEN ---
         if (m_ctx.LocalPlayerState == EPlayerState::Dead && m_ctx.State == ClientState::Lobby)
@@ -665,6 +659,11 @@ void GameClient::Run()
         
         sf::Sprite sprite(m_renderTexture.getTexture());
         m_ctx.Window.draw(sprite, &m_crtShader);
+        
+        if (m_ctx.State != ClientState::IpConfig && m_ctx.State != ClientState::Login)
+        {
+            m_chat.Draw(m_ctx.Window);
+        }
         
         m_ctx.Window.display();
     }

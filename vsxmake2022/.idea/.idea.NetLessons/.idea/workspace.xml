@@ -8,23 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41070ad6-fe81-41cd-8a8e-2468a04038c8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../src/Client/private/Avatars/AvatarManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/Avatars/AvatarManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/private/Avatars/PlayerAvatar.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/Avatars/PlayerAvatar.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/GameClient.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/private/Screens/ScreenGame.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/private/Screens/ScreenGame.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/public/Avatars/AvatarManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/Avatars/AvatarManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/public/Avatars/PlayerAvatar.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/Avatars/PlayerAvatar.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/public/ClientContext.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/ClientContext.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/public/Screens/ScreenGame.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/public/Screens/ScreenGame.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/CommonNet/PacketSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/CommonNet/PacketSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/private/Systems/MiniGameSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Systems/MiniGameSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/private/Systems/MovementSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/private/Systems/MovementSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Server/public/Systems/MiniGameSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Server/public/Systems/MiniGameSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NetLessons/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client/Client.vcxproj.filters" beforeDir="false" afterPath="$PROJECT_DIR$/Client/Client.vcxproj.filters" afterDir="false" />
-    </list>
+    <list default="true" id="41070ad6-fe81-41cd-8a8e-2468a04038c8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -122,6 +106,7 @@
       <workItem from="1770973386200" duration="1484000" />
       <workItem from="1771327013451" duration="761000" />
       <workItem from="1771344476804" duration="8000" />
+      <workItem from="1771577039032" duration="3946000" />
     </task>
     <servers />
   </component>

@@ -279,8 +279,9 @@ void MovementSystem::Update(float dt)
                 bool deadSeeLobby = (recvInfo.playerState == EPlayerState::Dead && info.playerState == EPlayerState::Lobby);
                 bool lobbySeeDead = (recvInfo.playerState == EPlayerState::Lobby && info.playerState == EPlayerState::Dead);
                 bool deadSeeDead = (recvInfo.playerState == EPlayerState::Dead && info.playerState == EPlayerState::Dead);
+                bool deadSeePlaying = (recvInfo.playerState == EPlayerState::Dead && info.playerState == EPlayerState::Playing);
 
-                if (sameState || spectatorWatchingGame || deadSeeLobby || lobbySeeDead || deadSeeDead)
+                if (sameState || spectatorWatchingGame || deadSeeLobby || lobbySeeDead || deadSeeDead || deadSeePlaying)
                 {
                     m_server->SendTo(recvPeer, posPkt);
                 }

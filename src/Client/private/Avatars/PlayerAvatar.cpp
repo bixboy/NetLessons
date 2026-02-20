@@ -194,7 +194,7 @@ void PlayerAvatar::Update(float dt, bool canInput)
 
 void PlayerAvatar::Draw(sf::RenderTarget& target, sf::Font& font)
 {
-    if (m_state == EPlayerState::Spectating)
+    if (m_state == EPlayerState::Spectating || m_isSpectator)
         return;
 
     float pulse = 0.f;

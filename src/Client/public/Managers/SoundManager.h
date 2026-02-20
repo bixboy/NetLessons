@@ -8,7 +8,6 @@
 enum class SoundType
 {
     Select,
-    Win,
     Lose,
     Push,
     Join,
@@ -29,9 +28,7 @@ public:
     void SetMute(bool mute);
     bool IsMuted() const { return m_isMuted; }
 
-    // System Volume (Windows)
-    void SetSystemVolume(float volume);
-    void SetSystemMute(bool mute);
+
 
 private:
     struct AudioItem
@@ -45,6 +42,6 @@ private:
     void LoadSound(SoundType type, const std::string& path);
 
     std::map<SoundType, AudioItem> m_audioItems;
-    float m_masterVolume = 100.f;
+    float m_masterVolume = 70.f;
     bool m_isMuted = false;
 };

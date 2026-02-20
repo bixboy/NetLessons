@@ -79,30 +79,13 @@ void AvatarManager::UpdateVisibility(EPlayerState localState)
         {
             shouldHide = true;
         }
-        else if (localState == EPlayerState::Spectating || localState == EPlayerState::Dead)
+        else if (m_ctx.State == ClientState::Lobby || m_ctx.State == ClientState::Result)
+        {
+            shouldHide = (remoteState == EPlayerState::Playing);
+        }
+        else if (m_ctx.State == ClientState::Game)
         {
             shouldHide = (remoteState == EPlayerState::Lobby);
-        }
-        else
-        {
-            if (localState == EPlayerState::Playing && remoteState == EPlayerState::Dead)
-            {
-                 shouldHide = false;
-            }
-            else
-            {
-                 bool compatible = (remoteState == localState);
-                 if (!compatible)
-                 {
-                     if (localState == EPlayerState::Lobby && remoteState == EPlayerState::Dead)
-                        compatible = true;
-
-                     if (localState == EPlayerState::Dead && remoteState == EPlayerState::Lobby)
-                        compatible = true;
-                 }
-                 
-                 shouldHide = !compatible;
-            }
         }
         
         avatar.SetSpectator(shouldHide);
@@ -144,6 +127,8 @@ void AvatarManager::Update(float dt, bool canInput)
     float areaW = static_cast<float>(m_ctx.WindowSize.x) - 40.f;
     float areaH = static_cast<float>(m_ctx.WindowSize.y) - 120.f;
     m_localAvatar.SetPlayArea(20.f, 20.f, areaW, areaH);
+
+    UpdateVisibility(m_localAvatar.GetState());
 
     m_localAvatar.Update(dt, canInput);
     for (auto& [name, avatar] : m_remoteAvatars)
