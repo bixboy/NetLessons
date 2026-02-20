@@ -1,7 +1,7 @@
 #include "UI/ChatBox.h"
-#include <iostream>
 #include <cmath>
 #include <algorithm>
+
 
 ChatBox::ChatBox() : m_font(nullptr)
     , m_isTyping(false)
@@ -287,7 +287,6 @@ void ChatBox::UpdateLayout()
     if (m_scrollOffset > (int)activeTab->messages.size() - 5) 
          m_scrollOffset = std::max(0, (int)activeTab->messages.size() - 5);
 
-    // Reset positions to hide everything by default (fixes ghosting)
     for (auto& msg : activeTab->messages)
     {
         msg.prefixObj.setPosition({-10000.f, -10000.f});
@@ -313,7 +312,6 @@ void ChatBox::UpdateLayout()
         }
         
         it->textObj.setPosition({baseX + prefixWidth, y});
-        
         index++;
     }
 }
@@ -461,31 +459,35 @@ void ChatBox::HandleInput(const sf::Event& event)
     {
         if (wheelEvent->wheel == sf::Mouse::Wheel::Vertical)
         {
-            float mx = (float)wheelEvent->position.x;
-            float my = (float)wheelEvent->position.y;
+            float mx = static_cast<float>(wheelEvent->position.x);
+            float my = static_cast<float>(wheelEvent->position.y);
             
             sf::FloatRect bounds = m_bg.getGlobalBounds();
             if (bounds.contains({mx, my}))
             {
                 if (wheelEvent->delta > 0) // Up
+                {
                     m_scrollOffset++;
+                }
                 else // Down
+                {
                     m_scrollOffset--;
-                
-                if (m_scrollOffset < 0) m_scrollOffset = 0;
-                
+                }
+
+                m_scrollOffset = std::max(m_scrollOffset, 0);
+
                 UpdateLayout();
             }
         }
     }
 }
 
-void ChatBox::Draw(sf::RenderWindow& window)
+void ChatBox::Draw(sf::RenderTarget& target)
 {
     // draw minimize
-    window.draw(m_minimizeBtn);
+    target.draw(m_minimizeBtn);
     if(m_minimizeText) 
-        window.draw(*m_minimizeText);
+        target.draw(*m_minimizeText);
 
     if (m_isMinimized) 
         return;
@@ -514,13 +516,13 @@ void ChatBox::Draw(sf::RenderWindow& window)
         tabRect.setOutlineColor(sf::Color(60, 60, 80));
         tabRect.setOutlineThickness(1.f);
         
-        window.draw(tabRect);
-        window.draw(tabText);
+        target.draw(tabRect);
+        target.draw(tabText);
         
         tabX += tabW + 2.f;
     }
 
-    window.draw(m_bg);
+    target.draw(m_bg);
     
     if (m_scrollOffset > 0)
     {
@@ -529,7 +531,7 @@ void ChatBox::Draw(sf::RenderWindow& window)
         scrollInd.setCharacterSize(10);
         scrollInd.setFillColor(sf::Color(100, 100, 100));
         scrollInd.setPosition({m_bg.getPosition().x + m_bg.getSize().x - 60, m_bg.getPosition().y + 5});
-        window.draw(scrollInd);
+        target.draw(scrollInd);
     }
     
     float minY = m_bg.getPosition().y;
@@ -548,18 +550,18 @@ void ChatBox::Draw(sf::RenderWindow& window)
             if (msg.textObj.getPosition().y >= minY)
             {
                 if (!msg.prefixObj.getString().isEmpty())
-                    window.draw(msg.prefixObj);
+                    target.draw(msg.prefixObj);
                 
-                window.draw(msg.textObj);
+                target.draw(msg.textObj);
             }
         }
     }
 
-    window.draw(m_inputBg);
+    target.draw(m_inputBg);
     
     if (m_isTyping && m_inputText)
     {
-        window.draw(*m_inputText);
+        target.draw(*m_inputText);
         
         float blinkTime = m_blinkClock.getElapsedTime().asSeconds();
         if (fmod(blinkTime, 1.0f) < 0.5f)
@@ -568,7 +570,7 @@ void ChatBox::Draw(sf::RenderWindow& window)
             float cursorX = m_inputText->getPosition().x + m_inputText->getLocalBounds().size.x + 2.f;
             cursor.setPosition({cursorX, m_inputText->getPosition().y + 2.f});
             cursor.setFillColor(sf::Color(0, 200, 255));
-            window.draw(cursor);
+            target.draw(cursor);
         }
     }
     else if (m_font)
@@ -579,7 +581,7 @@ void ChatBox::Draw(sf::RenderWindow& window)
         ph.setFillColor(sf::Color(100, 100, 120));
         ph.setStyle(sf::Text::Italic);
         ph.setPosition({m_inputBg.getPosition().x + 10, m_inputBg.getPosition().y + 10});
-        window.draw(ph);
+        target.draw(ph);
     }
 }
 

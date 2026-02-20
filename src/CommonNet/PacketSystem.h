@@ -20,23 +20,45 @@ enum class OpCode : int
 };
 
 
-// Player lifecycle state (shared by server & client)
 enum class EPlayerState : uint8_t
 {
     Lobby      = 0,
     Playing    = 1,
-    Spectating = 2
+    Spectating = 2,
+    Dead       = 3
 };
 
 
-// Sub-types carried inside PacketGameData::Value
 enum class EGameDataType : int
 {
     JustePrixHintUp   = 1,   // "Plus haut"
     JustePrixHintDown = 2,   // "Plus bas"
     BombState         = 10,  // Bomb holder + timer
     BombElimination   = 11,  // Player eliminated
-    GameStateChanged  = 20   // Game running / stopped
+    GameStateChanged  = 20,  // Game running / stopped
+
+    // Red Light Green Light
+    GreenLight        = 30,  // Light turns GREEN
+    RedLight          = 31,  // Light turns RED
+    PlayerEliminated  = 32,  // Player moved on RED
+    PlayerFinished    = 33,  // Player reached the finish line
+    
+    // RLGL - Fun Modes
+    IceModeOn         = 40,  // Floor becomes slippery
+    IceModeOff        = 41,
+    LightPurple       = 42,  // Troll light (Purple)
+    LightOrange       = 43,  // Troll light (Orange)
+
+    // Color Match (GameID = 3)
+    ColorGrid       = 50,  // Send Grid Data (ExtraData)
+    ColorRound      = 51,  // Round Start (Target Color in Value) - OLD use if legacy
+    ColorElimination= 52,  // Elimination Phase (Show lightning)
+    ColorWin        = 53,  // Player won
+    ColorTension    = 54,  // All tiles neon red (5s wait)
+    ColorReveal     = 55,  // Reveal grid + target color
+    
+    // Global
+    RespawnTimer    = 60   // Lobby Respawn Timer
 };
 
 
@@ -48,9 +70,6 @@ public:
     virtual void Serialize(GamePacket& packet) const = 0;
     virtual void Deserialize(GamePacket& packet) = 0;
 };
-
-
-// -- Helpers --
 
 
 // ==== Base Packet ====
@@ -120,7 +139,7 @@ struct PacketChat : PacketBase<OpCode::Chat>
 // ==== Start Game Packet ====
 struct PacketGameStart : PacketBase<OpCode::GameStart>
 {
-    uint8_t GameID = 0; // 0 = Le Juste Prix
+    uint8_t GameID = 0;
 
     void WritePayload(GamePacket& packet) const override
     {
@@ -221,14 +240,14 @@ struct PacketPlayerState : PacketBase<OpCode::PlayerState>
 // ==== Game End Packet ====
 struct PacketGameEnd : PacketBase<OpCode::GameEnd>
 {
-    // Forces return to lobby
+    // Lobby
 };
 
 
-// ==== Player Input Packet (Client -> Server) ====
+// ==== Player Input Packet ====
 struct PacketPlayerInput : PacketBase<OpCode::PlayerInput>
 {
-    int8_t DirX = 0;  // -1, 0, +1
+    int8_t DirX = 0;
     int8_t DirY = 0;
     bool Push = false;
 
@@ -244,7 +263,7 @@ struct PacketPlayerInput : PacketBase<OpCode::PlayerInput>
 };
 
 
-// ==== Player Position Packet (Server -> Clients) ====
+// ==== Player Position Packet ====
 struct PacketPlayerPosition : PacketBase<OpCode::PlayerPosition>
 {
     std::string Pseudo;
@@ -263,11 +282,11 @@ struct PacketPlayerPosition : PacketBase<OpCode::PlayerPosition>
 };
 
 
-// ==== Player Action Packet (Server -> Clients) ====
+// ==== Player Action Packet ====
 struct PacketPlayerAction : PacketBase<OpCode::PlayerAction>
 {
     std::string Pseudo;
-    uint8_t ActionType = 0; // 0 = Push, 1 = Hit, etc.
+    uint8_t ActionType = 0;
 
     void WritePayload(GamePacket& packet) const override
     {

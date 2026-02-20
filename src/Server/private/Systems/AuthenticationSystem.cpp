@@ -64,7 +64,6 @@ void AuthenticationSystem::Init(GameServer* s)
                     std::cout << "Premier joueur " << pkt.Pseudo << " devient ADMIN." << std::endl;
                 }
 
-                // Send existing player list to the newcomer
                 for (const auto& [peer, info] : players)
                 {
                     PacketPlayerList existingPkt;
@@ -87,9 +86,8 @@ void AuthenticationSystem::Init(GameServer* s)
             joinPkt.IsConnected = true;
             joinPkt.Pseudo = pkt.Pseudo;
             joinPkt.ColorID = player->colorID;
+            
             m_server->Broadcast(joinPkt, sender);
-
-            // Notify systems
             m_server->NotifyPlayerConnect(player);
         }
         else // LOGOUT
@@ -118,7 +116,6 @@ void AuthenticationSystem::Update(float dt)
     auto& players = m_server->GetPlayers();
     auto now = std::chrono::steady_clock::now();
     
-    // Collect timed-out peers to avoid iterator invalidation
     std::vector<ENetPeer*> timedOut;
     for (const auto& [peer, info] : players)
     {

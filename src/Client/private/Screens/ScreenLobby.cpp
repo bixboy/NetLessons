@@ -5,14 +5,12 @@
 #include "Avatars/AvatarManager.h"
 
 
-ScreenLobby::ScreenLobby(ClientContext& ctx, UIRenderer& ui, AvatarManager& avatars)
-    : m_ctx(ctx), m_ui(ui), m_avatars(avatars)
+ScreenLobby::ScreenLobby(ClientContext& ctx, UIRenderer& ui, AvatarManager& avatars): m_ctx(ctx), m_ui(ui), m_avatars(avatars)
 {
 }
 
 void ScreenLobby::HandleInput(const sf::Event& event)
 {
-    // Lobby has no special key input beyond avatar movement (handled by AvatarManager)
 }
 
 void ScreenLobby::Draw()
@@ -26,12 +24,12 @@ void ScreenLobby::Draw()
     listTitle.setCharacterSize(18);
     listTitle.setPosition({40.f, 40.f});
     listTitle.setStyle(sf::Text::Bold);
-    m_ctx.Window.draw(listTitle);
+    m_ctx.Target->draw(listTitle);
 
     sf::RectangleShape sep({160.f, 1.f});
     sep.setPosition({40.f, 70.f});
     sep.setFillColor(sf::Color(60, 60, 80));
-    m_ctx.Window.draw(sep);
+    m_ctx.Target->draw(sep);
 
     float y = 90.f;
     for (const auto& name : m_ctx.PlayerNames)
@@ -47,7 +45,7 @@ void ScreenLobby::Draw()
 
         pName.setCharacterSize(15);
         pName.setPosition({40.f, y});
-        m_ctx.Window.draw(pName);
+        m_ctx.Target->draw(pName);
 
         if (isMe)
         {
@@ -56,7 +54,7 @@ void ScreenLobby::Draw()
             youTag.setFillColor(sf::Color(100, 100, 130));
             youTag.setCharacterSize(11);
             youTag.setPosition({45.f + pName.getLocalBounds().size.x + 5.f, y + 2.f});
-            m_ctx.Window.draw(youTag);
+            m_ctx.Target->draw(youTag);
         }
 
         y += 28.f;
@@ -67,7 +65,7 @@ void ScreenLobby::Draw()
     countText.setFillColor(sf::Color(100, 100, 130));
     countText.setCharacterSize(12);
     countText.setPosition({40.f, m_ctx.WindowSize.y - 70.f});
-    m_ctx.Window.draw(countText);
+    m_ctx.Target->draw(countText);
 
     // --- Main Area ---
     sf::Text title(m_ctx.Font);
@@ -75,13 +73,13 @@ void ScreenLobby::Draw()
     title.setFillColor(sf::Color::White);
     title.setStyle(sf::Text::Bold);
     m_ui.CenterText(title, 60, 36);
-    m_ctx.Window.draw(title);
+    m_ctx.Target->draw(title);
 
     sf::Text status(m_ctx.Font);
     status.setString(m_ctx.ServerMessage);
     status.setFillColor(m_ctx.MessageColor);
     m_ui.CenterText(status, 130, 18);
-    m_ctx.Window.draw(status);
+    m_ctx.Target->draw(status);
 
     // --- Mini-Game Buttons ---
     float startY = 220.f;
@@ -95,7 +93,7 @@ void ScreenLobby::Draw()
         runningMsg.setFillColor(sf::Color(255, 100, 100));
         runningMsg.setStyle(sf::Text::Bold);
         m_ui.CenterText(runningMsg, startY, 20);
-        m_ctx.Window.draw(runningMsg);
+        m_ctx.Target->draw(runningMsg);
 
         m_ui.DrawButton("OBSERVER  [E]", startY + 50.f, true);
     }
@@ -114,7 +112,7 @@ void ScreenLobby::Draw()
         waiting.setString("En attente de joueurs...");
         waiting.setFillColor(sf::Color(100, 100, 130));
         m_ui.CenterText(waiting, startY + m_ctx.AvailableGames.size() * btnGap + 30.f, 14);
-        m_ctx.Window.draw(waiting);
+        m_ctx.Target->draw(waiting);
     }
 
     // --- Interaction Progress Bar ---
@@ -128,12 +126,12 @@ void ScreenLobby::Draw()
         bg.setOrigin({20.f, 3.f});
         bg.setPosition({pos.x, pos.y - 30.f});
         bg.setFillColor(sf::Color(50, 50, 50));
-        m_ctx.Window.draw(bg);
+        m_ctx.Target->draw(bg);
 
         sf::RectangleShape bar({40.f * progress, 6.f});
         bar.setOrigin({20.f, 3.f});
         bar.setPosition({pos.x, pos.y - 30.f});
         bar.setFillColor(sf::Color::Yellow);
-        m_ctx.Window.draw(bar);
+        m_ctx.Target->draw(bar);
     }
 }

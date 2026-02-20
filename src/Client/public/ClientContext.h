@@ -7,6 +7,9 @@
 #include <map>
 
 
+enum class ClientState;
+class AvatarManager;
+
 enum class ClientState
 {
     IpConfig,
@@ -44,8 +47,8 @@ struct ClientContext
     std::string ServerMessage = "Veuillez entrer l'IP";
     sf::Color MessageColor = sf::Color::White;
     int CurrentNumberChoice = 50;
-    int GuessAttempts = 0;    // Number of guesses this round
-    int LastHint = 0;         // 0=none, 1=plus haut, 2=plus bas
+    int GuessAttempts = 0;
+    int LastHint = 0;
     std::string WinnerName;
     std::vector<MiniGameInfo> AvailableGames;
 
@@ -55,14 +58,20 @@ struct ClientContext
     float BombTimer = 0.f;
     std::vector<std::string> AlivePlayers;
     bool IsGameRunning = false;
+    float RespawnTimer = 0.f;
+    bool IsRedLight = false;
+    bool IsIceMode = false;
+    int TrollLight = 0;
     EPlayerState LocalPlayerState = EPlayerState::Lobby;
     bool IsSpectator() const { return LocalPlayerState == EPlayerState::Spectating; }
 
     // --- Managers ---
     SoundManager Sound;
+    AvatarManager* Avatars = nullptr;
 
     // --- Window / Rendering ---
     sf::RenderWindow Window;
+    sf::RenderTarget* Target = &Window;
     sf::Font Font;
     sf::Vector2u WindowSize;
     float CenterX = 0.f;
@@ -84,6 +93,7 @@ struct ClientContext
             sf::Color(255, 165, 0),
             sf::Color(150, 100, 255)
         };
+        
         return (id < 8) ? colors[id] : sf::Color::White;
     }
 };

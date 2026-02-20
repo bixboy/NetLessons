@@ -1,6 +1,7 @@
 #pragma once
 #include "Avatars/PlayerAvatar.h"
 #include "UI/ChatBox.h"
+#include "PacketSystem.h"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <map>
@@ -13,30 +14,30 @@ class AvatarManager
 public:
     explicit AvatarManager(ClientContext& ctx);
 
-    // Called once after login
     void InitLocalAvatar(const std::string& pseudo);
 
-    // Remote avatar management (called from network handlers)
     void AddRemoteAvatar(const std::string& pseudo, sf::Color color);
     void RemoveRemoteAvatar(const std::string& pseudo);
     void SetAvatarTarget(const std::string& pseudo, float x, float y);
     void SetLocalTarget(float x, float y);
     void SetSpectator(const std::string& pseudo, bool isSpectator);
+    void SetAvatarState(const std::string& pseudo, EPlayerState state);
+    void UpdateVisibility(EPlayerState localState);
     void ResetAllSpectators();
 
-    // Per-frame update
     void Update(float dt, bool canInput);
     void SendInput();
     void BuildInteractionZones();
     void CheckInteraction(float dt, const ChatBox& chat);
 
-    // Rendering
     void Draw(sf::Font& font);
 
-    // Push feedback dispatch
     void OnPushAction(const std::string& pusherPseudo);
+    
+    void TriggerExplosion(const std::string& pseudo);
 
-    // Accessors
+    void SetIceMode(bool enabled);
+
     float GetInteractionTimer() const { return m_interactionTimer; }
     sf::Vector2f GetLocalAvatarPosition() const { return m_localAvatar.GetPosition(); }
 
@@ -55,4 +56,17 @@ private:
     // Screen shake
     float m_shakeIntensity = 0.f;
     float m_shakeTimer = 0.f;
+
+    // --- GROUND BLOOD ---
+    struct GroundBlood
+    {
+        sf::Vector2f pos;
+        float scale;
+        float rotation;
+        float alpha;
+        float decaySpeed;
+        sf::Color color;
+    };
+    std::vector<GroundBlood> m_groundBlood;
+    void SpawnGroundBlood(float x, float y);
 };

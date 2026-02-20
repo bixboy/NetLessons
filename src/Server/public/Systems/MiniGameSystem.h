@@ -4,42 +4,43 @@
 #include <vector>
 #include "IServerSystem.h"
 #include "PacketSystem.h"
+#include <memory>
+#include "MiniGames/IServerMiniGame.h"
 
 
 class MiniGameSystem : public IServerSystem
 {
 public:
+    static MiniGameSystem* s_instance;
+
     MiniGameSystem();
+    virtual ~MiniGameSystem();
+    
     void Init(GameServer* server) override;
+    
     void Update(float dt) override;
+    
     void OnPlayerDisconnect(PlayerInfo* player) override;
     void OnPlayerConnect(PlayerInfo* player) override;
 
-    // Called by MovementSystem via GameServer::OnPushHit
     void HandlePushHit(const std::string& pusher, const std::string& target);
 
-private:
-    void StartHotPotato(GameServer* server);
-    void EndGame(const std::string& winnerName);
     void SetPlayerState(PlayerInfo& player, EPlayerState newState);
-    void BroadcastBombState();
-    void EliminateBombHolder();
-    void PickRandomBombHolder();
+    void EndGame(const std::string& winnerName);
+
+private:
 
     GameServer* m_server = nullptr;
 
-    // Shared
     bool m_gameRunning = false;
     uint8_t m_activeGameID = 0;
 
-    // Juste Prix
-    int m_mysteryNumber = 0;
+    std::unique_ptr<IServerMiniGame> m_currentGame;
 
-    // Hot Potato
-    std::string m_bombHolder;
-    float m_bombTimer = 0.f;
-    float m_bombBroadcastTimer = 0.f;
+public:
     std::vector<std::string> m_alivePlayers;
+
+    bool IsIceMode() const;
 
     // RNG
     std::mt19937 m_rng;

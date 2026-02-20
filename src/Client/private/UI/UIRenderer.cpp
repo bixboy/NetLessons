@@ -3,8 +3,7 @@
 #include <cmath>
 
 
-UIRenderer::UIRenderer(ClientContext& ctx)
-    : m_ctx(ctx)
+UIRenderer::UIRenderer(ClientContext& ctx): m_ctx(ctx)
 {
 }
 
@@ -16,7 +15,7 @@ void UIRenderer::DrawBackground()
         sf::RectangleShape line({static_cast<float>(m_ctx.WindowSize.x), 1.f});
         line.setPosition({0, static_cast<float>(i * 40)});
         line.setFillColor(lineColor);
-        m_ctx.Window.draw(line);
+        m_ctx.Target->draw(line);
     }
 }
 
@@ -27,7 +26,7 @@ void UIRenderer::DrawPanel(float x, float y, float w, float h, sf::Color color, 
     panel.setFillColor(color);
     panel.setOutlineThickness(1.f);
     panel.setOutlineColor(sf::Color(60, 60, 80, 200));
-    m_ctx.Window.draw(panel);
+    m_ctx.Target->draw(panel);
 }
 
 void UIRenderer::DrawButton(const std::string& textStr, float y, bool active, bool hovered)
@@ -52,7 +51,7 @@ void UIRenderer::DrawButton(const std::string& textStr, float y, bool active, bo
     btn.setOutlineThickness(2.f);
     btn.setOutlineColor(borderColor);
 
-    m_ctx.Window.draw(btn);
+    m_ctx.Target->draw(btn);
 
     sf::Text text(m_ctx.Font);
     text.setString(textStr);
@@ -60,7 +59,7 @@ void UIRenderer::DrawButton(const std::string& textStr, float y, bool active, bo
     text.setFillColor(active ? sf::Color::White : sf::Color(180, 180, 180));
     text.setStyle(sf::Text::Bold);
     CenterText(text, y - 10.f, 16);
-    m_ctx.Window.draw(text);
+    m_ctx.Target->draw(text);
 }
 
 void UIRenderer::DrawInputBox(const std::string& label, const std::string& value, float y, bool active)
@@ -70,7 +69,7 @@ void UIRenderer::DrawInputBox(const std::string& label, const std::string& value
     lbl.setFillColor(sf::Color(150, 150, 180));
     lbl.setCharacterSize(14);
     CenterText(lbl, y - 45.f, 14);
-    m_ctx.Window.draw(lbl);
+    m_ctx.Target->draw(lbl);
 
     float boxWidth = 320.f;
     float boxHeight = 45.f;
@@ -81,7 +80,7 @@ void UIRenderer::DrawInputBox(const std::string& label, const std::string& value
     box.setFillColor(sf::Color(25, 25, 35));
     box.setOutlineThickness(active ? 2.f : 1.f);
     box.setOutlineColor(active ? sf::Color(0, 200, 255) : sf::Color(80, 80, 100));
-    m_ctx.Window.draw(box);
+    m_ctx.Target->draw(box);
 
     std::string displayValue = value;
     if (active)
@@ -98,7 +97,44 @@ void UIRenderer::DrawInputBox(const std::string& label, const std::string& value
     val.setFillColor(sf::Color::White);
     val.setCharacterSize(18);
     CenterText(val, y - 10.f, 18);
-    m_ctx.Window.draw(val);
+    m_ctx.Target->draw(val);
+}
+
+void UIRenderer::DrawEliminationScreen()
+{
+    // 1. Red Overlay
+    sf::RectangleShape overlay(sf::Vector2f(m_ctx.WindowSize));
+    overlay.setFillColor(sf::Color(255, 0, 0, 80));
+    m_ctx.Target->draw(overlay);
+
+    // 2. "YOU ARE ELIMINATED" Text
+    sf::Text text(m_ctx.Font);
+    text.setString("VOUS ETES ELIMINE !");
+    text.setCharacterSize(50);
+    text.setFillColor(sf::Color::White);
+    text.setOutlineColor(sf::Color::Black);
+    text.setOutlineThickness(3.f);
+    text.setStyle(sf::Text::Bold);
+
+    sf::FloatRect bounds = text.getLocalBounds();
+    text.setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
+    text.setPosition({m_ctx.CenterX, static_cast<float>(m_ctx.WindowSize.y) / 2.f});
+
+    m_ctx.Target->draw(text);
+    
+    // Subtext
+    sf::Text sub(m_ctx.Font);
+    sub.setString("Attendez la fin de la manche...");
+    sub.setCharacterSize(20);
+    sub.setFillColor(sf::Color(255, 200, 200));
+    sub.setOutlineColor(sf::Color::Black);
+    sub.setOutlineThickness(1.f);
+    
+    bounds = sub.getLocalBounds();
+    sub.setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
+    sub.setPosition({m_ctx.CenterX, static_cast<float>(m_ctx.WindowSize.y) / 2.f + 50.f});
+    
+    m_ctx.Target->draw(sub);
 }
 
 void UIRenderer::CenterText(sf::Text& text, float y, int fontSize)

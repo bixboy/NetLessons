@@ -86,7 +86,6 @@ void GameServer::RemovePlayer(ENetPeer* peer)
         
         bool wasAdmin = it->second.isAdmin;
         
-        // Notify all systems
         for (auto& sys : m_systems)
             sys->OnPlayerDisconnect(&it->second);
         

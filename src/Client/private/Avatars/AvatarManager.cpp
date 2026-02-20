@@ -4,8 +4,7 @@
 #include <cstdlib>
 
 
-AvatarManager::AvatarManager(ClientContext& ctx)
-    : m_ctx(ctx)
+AvatarManager::AvatarManager(ClientContext& ctx) : m_ctx(ctx)
 {
 }
 
@@ -57,8 +56,64 @@ void AvatarManager::SetSpectator(const std::string& pseudo, bool isSpectator)
     }
 }
 
+void AvatarManager::SetAvatarState(const std::string& pseudo, EPlayerState state)
+{
+    auto it = m_remoteAvatars.find(pseudo);
+    if (it != m_remoteAvatars.end())
+    {
+        it->second.SetState(state);
+    }
+}
+
+void AvatarManager::UpdateVisibility(EPlayerState localState)
+{
+    m_localAvatar.SetState(localState);
+    m_localAvatar.SetSpectator(localState == EPlayerState::Spectating);
+
+    for (auto& [name, avatar] : m_remoteAvatars)
+    {
+        EPlayerState remoteState = avatar.GetState();
+        bool shouldHide = false;
+
+        if (remoteState == EPlayerState::Spectating)
+        {
+            shouldHide = true;
+        }
+        else if (localState == EPlayerState::Spectating || localState == EPlayerState::Dead)
+        {
+            shouldHide = (remoteState == EPlayerState::Lobby);
+        }
+        else
+        {
+            if (localState == EPlayerState::Playing && remoteState == EPlayerState::Dead)
+            {
+                 shouldHide = false;
+            }
+            else
+            {
+                 bool compatible = (remoteState == localState);
+                 if (!compatible)
+                 {
+                     if (localState == EPlayerState::Lobby && remoteState == EPlayerState::Dead)
+                        compatible = true;
+
+                     if (localState == EPlayerState::Dead && remoteState == EPlayerState::Lobby)
+                        compatible = true;
+                 }
+                 
+                 shouldHide = !compatible;
+            }
+        }
+        
+        avatar.SetSpectator(shouldHide);
+    }
+}
+
 void AvatarManager::SendInput()
 {
+    if (m_localAvatar.GetState() == EPlayerState::Dead) 
+        return;
+
     if (m_inputSendClock.getElapsedTime().asSeconds() < 0.033f)
         return;
     m_inputSendClock.restart();
@@ -97,21 +152,34 @@ void AvatarManager::Update(float dt, bool canInput)
         avatar.Update(dt);
     }
 
-    // Decay screen shake
     if (m_shakeTimer > 0.f)
     {
         m_shakeTimer -= dt;
-        m_shakeIntensity *= 0.9f; // Rapid falloff
+        m_shakeIntensity *= 0.9f;
     }
     else
     {
         m_shakeIntensity = 0.f;
     }
+
+    for (auto it = m_groundBlood.begin(); it != m_groundBlood.end();)
+    {
+        float decay = it->decaySpeed * dt;
+        it->alpha -= decay;
+
+        if (it->alpha <= 0.f)
+        {
+            it = m_groundBlood.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 void AvatarManager::Draw(sf::Font& font)
 {
-    // Draw interaction zone indicators
     for (const auto& zone : m_interactionZones)
     {
         sf::FloatRect avatarBounds = m_localAvatar.GetBounds();
@@ -124,7 +192,7 @@ void AvatarManager::Draw(sf::Font& font)
             highlight.setFillColor(sf::Color(255, 255, 100, 30));
             highlight.setOutlineThickness(2.f);
             highlight.setOutlineColor(sf::Color(255, 255, 100, static_cast<uint8_t>(100 + m_ctx.PulseValue * 155)));
-            m_ctx.Window.draw(highlight);
+            m_ctx.Target->draw(highlight);
 
             sf::Text prompt(font);
             prompt.setString("[E]");
@@ -132,47 +200,64 @@ void AvatarManager::Draw(sf::Font& font)
             prompt.setFillColor(sf::Color(255, 255, 100));
             prompt.setStyle(sf::Text::Bold);
             sf::FloatRect promptBounds = prompt.getLocalBounds();
+
             prompt.setPosition({
                 zone.bounds.position.x + zone.bounds.size.x / 2.f - promptBounds.size.x / 2.f,
                 zone.bounds.position.y - 20.f
             });
-            m_ctx.Window.draw(prompt);
+
+            m_ctx.Target->draw(prompt);
         }
     }
 
-    // Apply screen shake via view offset (save + restore)
-    sf::View originalView = m_ctx.Window.getView();
+    sf::View originalView = m_ctx.Target->getView();
     if (m_shakeIntensity > 0.5f)
     {
         sf::View shakenView = originalView;
         float ox = (static_cast<float>(std::rand() % 100) / 50.f - 1.f) * m_shakeIntensity;
         float oy = (static_cast<float>(std::rand() % 100) / 50.f - 1.f) * m_shakeIntensity;
         shakenView.move({ox, oy});
-        m_ctx.Window.setView(shakenView);
+        m_ctx.Target->setView(shakenView);
     }
 
-    // Draw remote avatars first (behind local)
-    for (auto& [name, avatar] : m_remoteAvatars)
-    {
-        // Hot Potato: check bomb holder
-        if (m_ctx.ActiveGameID == 1)
-            avatar.SetBombHolder(name == m_ctx.BombHolder);
-        else
-            avatar.SetBombHolder(false);
-
-        avatar.Draw(m_ctx.Window, font);
-    }
-
-    // Draw local avatar on top
     if (m_ctx.ActiveGameID == 1)
         m_localAvatar.SetBombHolder(m_localAvatar.GetPseudo() == m_ctx.BombHolder);
     else
         m_localAvatar.SetBombHolder(false);
 
-    m_localAvatar.Draw(m_ctx.Window, font);
+    // Draw Ground Blood (Under Everything)
+    for (const auto& blood : m_groundBlood)
+    {
+        sf::CircleShape stain(20.f);
+        stain.setScale({blood.scale, blood.scale * 0.8f});
+        stain.setOrigin({20.f, 20.f});
+        stain.setPosition(blood.pos);
+        stain.setRotation(sf::degrees(blood.rotation));
+        
+        sf::Color c = blood.color;
+        c.a = static_cast<uint8_t>(blood.alpha);
+        stain.setFillColor(c);
+        
+        m_ctx.Target->draw(stain);
+    }
 
-    // Restore original view
-    m_ctx.Window.setView(originalView);
+    for (auto& [name, avatar] : m_remoteAvatars)
+    {
+        if (m_ctx.ActiveGameID == 1)
+            avatar.SetBombHolder(name == m_ctx.BombHolder);
+        else
+            avatar.SetBombHolder(false);
+
+        avatar.Draw(*m_ctx.Target, font);
+    }
+
+    if (m_ctx.ActiveGameID == 1)
+        m_localAvatar.SetBombHolder(m_localAvatar.GetPseudo() == m_ctx.BombHolder);
+    else
+        m_localAvatar.SetBombHolder(false);
+
+    m_localAvatar.Draw(*m_ctx.Target, font);
+    m_ctx.Target->setView(originalView);
 }
 
 void AvatarManager::BuildInteractionZones()
@@ -189,7 +274,6 @@ void AvatarManager::BuildInteractionZones()
 
         if (m_ctx.IsGameRunning)
         {
-            // Spectate Button
             float btnGap = 50.f;
             float y = startY + btnGap;
              m_interactionZones.push_back({
@@ -406,6 +490,68 @@ void AvatarManager::OnPushAction(const std::string& pusherPseudo)
         }
     }
 
+}
+
+void AvatarManager::TriggerExplosion(const std::string& pseudo)
+{
+    if (m_localAvatar.GetPseudo() == pseudo)
+    {
+        m_localAvatar.TriggerExplosionEffect();
+        SpawnGroundBlood(m_localAvatar.GetPosition().x, m_localAvatar.GetPosition().y);
+        
+        // Screen Shake
+        m_shakeIntensity = 15.f;
+        m_shakeTimer = 0.5f;
+    }
+    else
+    {
+        auto it = m_remoteAvatars.find(pseudo);
+        if (it != m_remoteAvatars.end())
+        {
+            it->second.TriggerExplosionEffect();
+            SpawnGroundBlood(it->second.GetPosition().x, it->second.GetPosition().y);
+        }
+    }
+}
+
+void AvatarManager::SetIceMode(bool enabled)
+{
+    m_localAvatar.SetIceMode(enabled);
+    for (auto& [pseudo, avatar] : m_remoteAvatars)
+    {
+        avatar.SetIceMode(enabled);
+    }
+}
+
+void AvatarManager::SpawnGroundBlood(float x, float y)
+{
+    // Generate 3-6 large stains
+    int count = 3 + (std::rand() % 4);
+    
+    for (int i = 0; i < count; ++i)
+    {
+        GroundBlood b;
+        // Random offset
+        float ox = (static_cast<float>(std::rand() % 60) - 30.f);
+        float oy = (static_cast<float>(std::rand() % 60) - 30.f);
+        b.pos = {x + ox, y + oy};
+        
+        // Random scale
+        b.scale = 1.0f + (static_cast<float>(std::rand() % 150) / 100.f);
+        
+        // Random rotation
+        b.rotation = static_cast<float>(std::rand() % 360);
+        
+        // Alpha & Decay
+        b.alpha = 180.f + (std::rand() % 50);
+        b.decaySpeed = 5.f + (std::rand() % 5); // Lasts 20-30s
+        
+        // Color
+        int rVar = std::rand() % 50;
+        b.color = sf::Color(100 + rVar, 0, 0); // Darker red on floor
+        
+        m_groundBlood.push_back(b);
+    }
 }
 
 void AvatarManager::ResetAllSpectators()

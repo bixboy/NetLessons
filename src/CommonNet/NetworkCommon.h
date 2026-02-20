@@ -9,8 +9,6 @@
 const int PORT = 55555;
 const int TIMEOUT_SECONDS = 5;
 
-// Enum Legacy supprimé (non utilisé par le nouveau système de Packet)
-
 class GamePacket
 {
 public:

@@ -4,14 +4,12 @@
 #include "UI/UIRenderer.h"
 
 
-ScreenResult::ScreenResult(ClientContext& ctx, UIRenderer& ui)
-    : m_ctx(ctx), m_ui(ui)
+ScreenResult::ScreenResult(ClientContext& ctx, UIRenderer& ui) : m_ctx(ctx), m_ui(ui)
 {
 }
 
 void ScreenResult::HandleInput(const sf::Event& event)
 {
-    // Interaction is handled by AvatarManager (hold E on "REJOUER" zone)
 }
 
 void ScreenResult::Draw()
@@ -26,20 +24,20 @@ void ScreenResult::Draw()
     title.setFillColor(isWinner ? sf::Color(100, 255, 150) : sf::Color(255, 100, 100));
     title.setStyle(sf::Text::Bold);
     m_ui.CenterText(title, 100.f + offset, 48);
-    m_ctx.Window.draw(title);
+    m_ctx.Target->draw(title);
 
     sf::Text winnerLabel(m_ctx.Font);
     winnerLabel.setString("Gagnant");
     winnerLabel.setFillColor(sf::Color(120, 120, 150));
     m_ui.CenterText(winnerLabel, 180.f + offset, 16);
-    m_ctx.Window.draw(winnerLabel);
+    m_ctx.Target->draw(winnerLabel);
 
     sf::Text winner(m_ctx.Font);
     winner.setString(m_ctx.WinnerName);
     winner.setFillColor(sf::Color::White);
     winner.setStyle(sf::Text::Bold);
     m_ui.CenterText(winner, 220.f + offset, 32);
-    m_ctx.Window.draw(winner);
+    m_ctx.Target->draw(winner);
 
     m_ui.DrawButton("REJOUER  [ENTREE]", 350.f + offset, true);
 }

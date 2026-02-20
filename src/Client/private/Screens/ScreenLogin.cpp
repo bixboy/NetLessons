@@ -55,13 +55,13 @@ void ScreenLogin::Draw()
     title.setFillColor(sf::Color(0, 200, 255));
     title.setStyle(sf::Text::Bold);
     m_ui.CenterText(title, 80, 42);
-    m_ctx.Window.draw(title);
+    m_ctx.Target->draw(title);
 
     sf::Text subtitle(m_ctx.Font);
     subtitle.setString("Choisissez votre identité");
     subtitle.setFillColor(sf::Color(120, 120, 150));
     m_ui.CenterText(subtitle, 130, 16);
-    m_ctx.Window.draw(subtitle);
+    m_ctx.Target->draw(subtitle);
 
     m_ui.DrawInputBox("VOTRE PSEUDO", m_ctx.PseudoInput, 250.f, true);
     m_ui.DrawButton("REJOINDRE LE LOBBY", 350.f, !m_ctx.PseudoInput.empty());

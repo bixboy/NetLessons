@@ -37,4 +37,23 @@ private:
 
     // --- Clocks ---
     sf::Clock m_dtClock;
+
+    // --- Screen Blood Splatter ---
+    struct BloodSplatter
+    {
+        sf::Vector2f pos;
+        sf::Vector2f scale;
+        float rotation;
+        float alpha;
+        float decaySpeed;
+        sf::Color color;
+    };
+    
+    std::vector<BloodSplatter> m_bloodSplatters;
+    void SpawnScreenBlood();
+
+    // --- Post-Processing ---
+    sf::RenderTexture m_renderTexture;
+    sf::Shader m_crtShader;
+    void InitShaders();
 };

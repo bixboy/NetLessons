@@ -1,11 +1,9 @@
 #pragma once
 #include <enet/enet.h>
-#include <vector>
-#include <string>
 #include <functional>
 #include <map>
-
 #include "PacketSystem.h"
+
 
 class NetworkServer
 {
@@ -25,7 +23,6 @@ public:
     using PacketHandler = std::function<void(GamePacket&, ENetPeer*)>;
     void OnPacket(OpCode type, PacketHandler handler);
 
-    // Callbacks système de haut niveau
     std::function<void(ENetPeer*)> OnConnect;
     std::function<void(ENetPeer*)> OnDisconnect;
 

@@ -11,8 +11,8 @@ enum class SoundType
     Win,
     Lose,
     Push,
-    Join,  // Player joined
-    Leave  // Player left
+    Join,
+    Leave
 };
 
 class SoundManager
@@ -25,13 +25,13 @@ public:
     void    Play(SoundType type);
     
     // Global settings
-    void    SetVolume(float volume); // 0.f to 100.f
-    void    SetMute(bool mute);
-    bool    IsMuted() const { return m_isMuted; }
+    void SetVolume(float volume);
+    void SetMute(bool mute);
+    bool IsMuted() const { return m_isMuted; }
 
     // System Volume (Windows)
-    void    SetSystemVolume(float volume);
-    void    SetSystemMute(bool mute);
+    void SetSystemVolume(float volume);
+    void SetSystemMute(bool mute);
 
 private:
     struct AudioItem

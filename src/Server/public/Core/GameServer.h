@@ -23,7 +23,7 @@ struct PlayerInfo
     uint8_t colorID = 0;
     EPlayerState playerState = EPlayerState::Lobby;
 
-    // Movement (server-authoritative, normalized 0.0-1.0)
+    // Movement
     float posX = 0.5f;
     float posY = 0.5f;
     int8_t inputDirX = 0;
@@ -33,7 +33,12 @@ struct PlayerInfo
     // Physics & PvP
     float velocityX = 0.f;
     float velocityY = 0.f;
-    float pushCooldown = 0.f; // Seconds
+    float pushCooldown = 0.f;
+    
+    // Wall Pin Death Logic
+    int wallPinCount = 0;
+    float lastPinTime = 0.f;
+    float respawnTimer = 0.f;
 };
 
 class GameServer
@@ -65,7 +70,6 @@ public:
     void RemovePlayer(ENetPeer* peer);
     void NotifyPlayerConnect(PlayerInfo* player);
 
-    // Push event callback (used by MiniGameSystem for bomb transfer)
     std::function<void(const std::string& pusher, const std::string& target)> OnPushHit;
 
 private:

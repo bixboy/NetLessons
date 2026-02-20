@@ -17,7 +17,7 @@ NetworkClient::~NetworkClient()
 
 bool NetworkClient::Connect(const std::string& address, int port)
 {
-    Disconnect(); // Clean up if needed
+    Disconnect();
 
     m_client = enet_host_create(nullptr, 1, 2, 0, 0);
 
@@ -38,7 +38,6 @@ bool NetworkClient::Connect(const std::string& address, int port)
         return false;
     }
     
-    // Attendre la connexion (ENet ne connecte pas instantanément)
     ENetEvent event;
     if (enet_host_service(m_client, &event, 5000) > 0 &&
         event.type == ENET_EVENT_TYPE_CONNECT)
@@ -60,14 +59,13 @@ bool NetworkClient::Connect(const std::string& address, int port)
 
 void NetworkClient::Disconnect()
 {
-    if (!m_client) return;
+    if (!m_client) 
+        return;
 
     if (m_peer)
     {
         enet_peer_disconnect(m_peer, 0);
-
-        // Allow up to 3 seconds for the disconnect to succeed
-        // and drop any packets received packets.
+        
         ENetEvent event;
         bool disconnected = false;
 
@@ -78,12 +76,18 @@ void NetworkClient::Disconnect()
             case ENET_EVENT_TYPE_RECEIVE:
                 enet_packet_destroy(event.packet);
                 break;
+                
             case ENET_EVENT_TYPE_DISCONNECT:
                  std::cout << "Disconnection succeeded." << std::endl;
                  disconnected = true;
                  break;
+                
+            default: 
+                break;
             }
-            if (disconnected) break;
+            
+            if (disconnected) 
+                break;
         }
 
         if (!disconnected)
@@ -105,9 +109,9 @@ void NetworkClient::Disconnect()
 
 void NetworkClient::Send(GamePacket& pkt)
 {
-    if (!m_peer || !m_isConnected) return;
+    if (!m_peer || !m_isConnected) 
+        return;
 
-    // Create packet (Reliable by default for most game logic here)
     ENetPacket* packet = enet_packet_create(pkt.Data(), pkt.Size(), ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(m_peer, 0, packet);
 }
@@ -116,7 +120,7 @@ void NetworkClient::Send(const IPacket& packet)
 {
     GamePacket rawPacket;
     packet.Serialize(rawPacket);
-    Send(rawPacket); // Overload
+    Send(rawPacket);
 }
 
 void NetworkClient::OnPacket(OpCode type, PacketHandler handler)
@@ -126,21 +130,20 @@ void NetworkClient::OnPacket(OpCode type, PacketHandler handler)
 
 void NetworkClient::PollEvents()
 {
-    if (!m_client) return;
+    if (!m_client)
+        return;
 
     ENetEvent event;
-    // Non-blocking poll
     while (enet_host_service(m_client, &event, 0) > 0)
     {
         switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
-            // Déjà géré dans Connect, mais peut arriver si reconnexion?
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
             {
-                GamePacket packet((const char*)event.packet->data, event.packet->dataLength);
+                GamePacket packet(reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength);
 
                 if (packet.Size() >= 4)
                 {
@@ -163,7 +166,12 @@ void NetworkClient::PollEvents()
             std::cout << "Server disconnected." << std::endl;
             m_isConnected = false;
             m_peer = nullptr;
-            if (m_onDisconnect) m_onDisconnect("Connexion perdue avec le serveur.");
+            if (m_onDisconnect)
+                m_onDisconnect("Connexion perdue avec le serveur.");
+            
+            break;
+            
+        default: 
             break;
         }
     }

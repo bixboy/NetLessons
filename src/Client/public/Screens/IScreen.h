@@ -7,5 +7,6 @@ class IScreen
 public:
     virtual ~IScreen() = default;
     virtual void HandleInput(const sf::Event& event) = 0;
+    virtual void Update(float dt) {}
     virtual void Draw() = 0;
 };

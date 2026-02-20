@@ -27,7 +27,7 @@ public:
     
     void HandleInput(const sf::Event& event);
     
-    void Draw(sf::RenderWindow& window);
+    void Draw(sf::RenderTarget& target);
     
     void AddChannel(const std::string& name);
     void AddMessage(const std::string& channel, const std::string& sender, const std::string& content, MessageType type, std::optional<sf::Color> customColor = std::nullopt);

@@ -3,8 +3,7 @@
 #include "UI/UIRenderer.h"
 
 
-ScreenIpConfig::ScreenIpConfig(ClientContext& ctx, UIRenderer& ui)
-    : m_ctx(ctx), m_ui(ui)
+ScreenIpConfig::ScreenIpConfig(ClientContext& ctx, UIRenderer& ui) : m_ctx(ctx), m_ui(ui)
 {
 }
 
@@ -54,13 +53,13 @@ void ScreenIpConfig::Draw()
     title.setFillColor(sf::Color(0, 200, 255));
     title.setStyle(sf::Text::Bold);
     m_ui.CenterText(title, 80, 42);
-    m_ctx.Window.draw(title);
+    m_ctx.Target->draw(title);
 
     sf::Text subtitle(m_ctx.Font);
     subtitle.setString("Le Juste Prix - Multijoueur");
     subtitle.setFillColor(sf::Color(120, 120, 150));
     m_ui.CenterText(subtitle, 130, 16);
-    m_ctx.Window.draw(subtitle);
+    m_ctx.Target->draw(subtitle);
 
     m_ui.DrawInputBox("ADRESSE IP DU SERVEUR", m_ctx.IpInput, 250.f, true);
     m_ui.DrawButton("SE CONNECTER", 350.f, !m_ctx.IpInput.empty());
@@ -69,11 +68,11 @@ void ScreenIpConfig::Draw()
     errorMsg.setString(m_ctx.ServerMessage);
     errorMsg.setFillColor(m_ctx.MessageColor);
     m_ui.CenterText(errorMsg, 430, 16);
-    m_ctx.Window.draw(errorMsg);
+    m_ctx.Target->draw(errorMsg);
 
     sf::Text hint(m_ctx.Font);
     hint.setString("Appuyez sur ENTREE pour valider");
     hint.setFillColor(sf::Color(80, 80, 100));
     m_ui.CenterText(hint, m_ctx.WindowSize.y - 40.f, 12);
-    m_ctx.Window.draw(hint);
+    m_ctx.Target->draw(hint);
 }

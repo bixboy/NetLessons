@@ -43,7 +43,8 @@ void NetworkServer::Stop()
 
 void NetworkServer::Broadcast(const GamePacket& packet, ENetPeer* excluded)
 {
-    if (!m_host) return;
+    if (!m_host)
+        return;
 
     ENetPacket* ePacket = enet_packet_create(packet.Data(), packet.Size(), ENET_PACKET_FLAG_RELIABLE);
     
@@ -60,7 +61,6 @@ void NetworkServer::Broadcast(const GamePacket& packet, ENetPeer* excluded)
             sent = true;
         }
         
-        // If no peer received it, we must free the packet manually
         if (!sent)
             enet_packet_destroy(ePacket);
     }
@@ -79,7 +79,8 @@ void NetworkServer::Broadcast(const IPacket& packet, ENetPeer* excluded)
 
 void NetworkServer::SendTo(const GamePacket& packet, ENetPeer* peer)
 {
-    if (!peer) return;
+    if (!peer)
+        return;
     
     ENetPacket* ePacket = enet_packet_create(packet.Data(), packet.Size(), ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, ePacket);
@@ -94,7 +95,8 @@ void NetworkServer::SendTo(const IPacket& packet, ENetPeer* peer)
 
 void NetworkServer::PollEvents()
 {
-    if (!m_host) return;
+    if (!m_host)
+        return;
 
     ENetEvent event;
     while (enet_host_service(m_host, &event, 0) > 0)
@@ -103,12 +105,14 @@ void NetworkServer::PollEvents()
         {
         case ENET_EVENT_TYPE_CONNECT:
             std::cout << "A new client connected from " << event.peer->address.host << ":" << event.peer->address.port << ".\n";
-            if (OnConnect) OnConnect(event.peer);
+            if (OnConnect)
+                OnConnect(event.peer);
+            
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
             {
-                GamePacket packet((const char*)event.packet->data, event.packet->dataLength);
+                GamePacket packet(reinterpret_cast<const char*>(event.packet->data), event.packet->dataLength);
                 
                 if (packet.Size() >= 4)
                 {
@@ -129,8 +133,11 @@ void NetworkServer::PollEvents()
 
         case ENET_EVENT_TYPE_DISCONNECT:
             std::cout << "Client disconnected.\n";
-            if (OnDisconnect) OnDisconnect(event.peer);
+            if (OnDisconnect)
+                OnDisconnect(event.peer);
+            
             event.peer->data = nullptr;
+            
             break;
             
         default:
