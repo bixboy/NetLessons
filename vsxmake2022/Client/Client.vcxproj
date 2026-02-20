@@ -110,11 +110,25 @@ PYTHONPATH=C:\Users\PIERRE\AppData\Local\.xmake\packages\p\python\3.13.2\6faae9a
 
   <Import Project="$(XmakeProgramDir)\scripts\vsxmake\vsproj\Xmake.props" />
   <ItemGroup>
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ChatBox.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Avatars\AvatarManager.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Avatars\PlayerAvatar.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ClientContext.h" />
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\GameClient.h" />
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Managers\SoundManager.h" />
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\NetworkClient.h" />
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\PlayerAvatar.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\IMiniGame.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameColorMatch.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameHotPotato.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameJustePrix.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameRedLightGreenLight.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Network\NetworkClient.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\IScreen.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenGame.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenIpConfig.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenLobby.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenLogin.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenResult.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\UI\ChatBox.h" />
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\UI\UIRenderer.h" />
 
 
   </ItemGroup>
@@ -123,7 +137,10 @@ PYTHONPATH=C:\Users\PIERRE\AppData\Local\.xmake\packages\p\python\3.13.2\6faae9a
     <ClCompile Include="$(XmakeProjectDir)\src\Client\ClientMain.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\ChatBox.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Avatars\AvatarManager.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Avatars\PlayerAvatar.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\GameClient.cpp">
@@ -132,10 +149,40 @@ PYTHONPATH=C:\Users\PIERRE\AppData\Local\.xmake\packages\p\python\3.13.2\6faae9a
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Managers\SoundManager.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\NetworkClient.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameColorMatch.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\PlayerAvatar.cpp">
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameHotPotato.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameJustePrix.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameRedLightGreenLight.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Network\NetworkClient.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenGame.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenIpConfig.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenLobby.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenLogin.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenResult.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\UI\ChatBox.cpp">
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\UI\UIRenderer.cpp">
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
 

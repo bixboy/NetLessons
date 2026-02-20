@@ -24,6 +24,9 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="src\Server\private\Core">
       <UniqueIdentifier>{E9EDC5C9-18CC-4E89-BFDC-DA67CEB1FBA6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Server\private\MiniGames">
+      <UniqueIdentifier>{35A63B4C-2968-4BEE-85F2-E2AFB3EAB6F3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Server\private\Systems">
       <UniqueIdentifier>{13F2AB7B-8C27-49DB-9FD0-875EAEFB144E}</UniqueIdentifier>
     </Filter>
@@ -32,6 +35,9 @@ xmake version 3.0.4+master.b703ec328
     </Filter>
     <Filter Include="src\Server\public\Core">
       <UniqueIdentifier>{7771BE87-5A18-41E5-9D82-2C2F64E3D7B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Server\public\MiniGames">
+      <UniqueIdentifier>{D0C9F0EA-BC6E-4C73-91FA-0764503F32CF}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Server\public\Systems">
       <UniqueIdentifier>{B9197621-63B0-49E6-98EC-4BE485C07955}</UniqueIdentifier>
@@ -61,6 +67,21 @@ xmake version 3.0.4+master.b703ec328
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\Core\GameServer.h">
       <Filter>src\Server\public\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\MiniGames\IServerMiniGame.h">
+      <Filter>src\Server\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\MiniGames\MiniGameColorMatchServer.h">
+      <Filter>src\Server\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\MiniGames\MiniGameHotPotatoServer.h">
+      <Filter>src\Server\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\MiniGames\MiniGameJustePrixServer.h">
+      <Filter>src\Server\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Server\public\MiniGames\MiniGameRedLightGreenLightServer.h">
+      <Filter>src\Server\public\MiniGames</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\src\Server\public\NetworkServer.h">
       <Filter>src\Server\public</Filter>
@@ -93,6 +114,18 @@ xmake version 3.0.4+master.b703ec328
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\Core\GameServer.cpp">
       <Filter>src\Server\private\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\MiniGames\MiniGameColorMatchServer.cpp">
+      <Filter>src\Server\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\MiniGames\MiniGameHotPotatoServer.cpp">
+      <Filter>src\Server\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\MiniGames\MiniGameJustePrixServer.cpp">
+      <Filter>src\Server\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Server\private\MiniGames\MiniGameRedLightGreenLightServer.cpp">
+      <Filter>src\Server\private\MiniGames</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Server\private\NetworkServer.cpp">
       <Filter>src\Server\private</Filter>

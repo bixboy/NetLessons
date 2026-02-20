@@ -21,14 +21,44 @@ xmake version 3.0.4+master.b703ec328
     <Filter Include="src\Client\private">
       <UniqueIdentifier>{8EBE9537-36F7-4CAF-A2E9-8712D1862FDA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Client\private\Avatars">
+      <UniqueIdentifier>{2C362124-B787-4AC5-B958-96E03F2CD2ED}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Client\private\Managers">
       <UniqueIdentifier>{FD6FAD93-3602-4B4E-927A-84914625BC92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\private\MiniGames">
+      <UniqueIdentifier>{9EF6FE89-997F-47AB-BB4D-B7C39AA46711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\private\Network">
+      <UniqueIdentifier>{EDB68C06-575B-44D2-9652-6DE667831501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\private\Screens">
+      <UniqueIdentifier>{4ABA7CC8-610F-4996-948F-C0514DB9A7D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\private\UI">
+      <UniqueIdentifier>{1B6F9076-D92E-4368-9BF2-D7E873220512}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Client\public">
       <UniqueIdentifier>{CCBF80BF-ACB3-43D7-B493-06FEAFD58E9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Client\public\Avatars">
+      <UniqueIdentifier>{EB6C0D63-EA96-4300-B179-CF1461AF658C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Client\public\Managers">
       <UniqueIdentifier>{4BCF5CCF-9CA7-4FBE-846B-59F394AC0058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\public\MiniGames">
+      <UniqueIdentifier>{0DD15F1A-D2FF-4885-8931-33A633A41F5B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\public\Network">
+      <UniqueIdentifier>{1EA12400-AB52-460E-9BEF-104168AD1876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\public\Screens">
+      <UniqueIdentifier>{5924DDB0-B552-49A5-BABF-F6EB3316A8C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client\public\UI">
+      <UniqueIdentifier>{44482218-8341-4349-A8A7-E278184B2C5A}</UniqueIdentifier>
     </Filter>
 
   </ItemGroup>
@@ -50,7 +80,13 @@ xmake version 3.0.4+master.b703ec328
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ChatBox.h">
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Avatars\AvatarManager.h">
+      <Filter>src\Client\public\Avatars</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Avatars\PlayerAvatar.h">
+      <Filter>src\Client\public\Avatars</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\ClientContext.h">
       <Filter>src\Client\public</Filter>
     </ClInclude>
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\GameClient.h">
@@ -59,11 +95,47 @@ xmake version 3.0.4+master.b703ec328
     <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Managers\SoundManager.h">
       <Filter>src\Client\public\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\NetworkClient.h">
-      <Filter>src\Client\public</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\IMiniGame.h">
+      <Filter>src\Client\public\MiniGames</Filter>
     </ClInclude>
-    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\PlayerAvatar.h">
-      <Filter>src\Client\public</Filter>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameColorMatch.h">
+      <Filter>src\Client\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameHotPotato.h">
+      <Filter>src\Client\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameJustePrix.h">
+      <Filter>src\Client\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\MiniGames\MiniGameRedLightGreenLight.h">
+      <Filter>src\Client\public\MiniGames</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Network\NetworkClient.h">
+      <Filter>src\Client\public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\IScreen.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenGame.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenIpConfig.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenLobby.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenLogin.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\Screens\ScreenResult.h">
+      <Filter>src\Client\public\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\UI\ChatBox.h">
+      <Filter>src\Client\public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="$(XmakeProjectDir)\src\Client\public\UI\UIRenderer.h">
+      <Filter>src\Client\public\UI</Filter>
     </ClInclude>
 
 
@@ -73,8 +145,11 @@ xmake version 3.0.4+master.b703ec328
     <ClCompile Include="$(XmakeProjectDir)\src\Client\ClientMain.cpp">
       <Filter>src\Client</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\ChatBox.cpp">
-      <Filter>src\Client\private</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Avatars\AvatarManager.cpp">
+      <Filter>src\Client\private\Avatars</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Avatars\PlayerAvatar.cpp">
+      <Filter>src\Client\private\Avatars</Filter>
     </ClCompile>
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\GameClient.cpp">
       <Filter>src\Client\private</Filter>
@@ -82,11 +157,41 @@ xmake version 3.0.4+master.b703ec328
     <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Managers\SoundManager.cpp">
       <Filter>src\Client\private\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\NetworkClient.cpp">
-      <Filter>src\Client\private</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameColorMatch.cpp">
+      <Filter>src\Client\private\MiniGames</Filter>
     </ClCompile>
-    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\PlayerAvatar.cpp">
-      <Filter>src\Client\private</Filter>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameHotPotato.cpp">
+      <Filter>src\Client\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameJustePrix.cpp">
+      <Filter>src\Client\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\MiniGames\MiniGameRedLightGreenLight.cpp">
+      <Filter>src\Client\private\MiniGames</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Network\NetworkClient.cpp">
+      <Filter>src\Client\private\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenGame.cpp">
+      <Filter>src\Client\private\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenIpConfig.cpp">
+      <Filter>src\Client\private\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenLobby.cpp">
+      <Filter>src\Client\private\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenLogin.cpp">
+      <Filter>src\Client\private\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\Screens\ScreenResult.cpp">
+      <Filter>src\Client\private\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\UI\ChatBox.cpp">
+      <Filter>src\Client\private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(XmakeProjectDir)\src\Client\private\UI\UIRenderer.cpp">
+      <Filter>src\Client\private\UI</Filter>
     </ClCompile>
 
 
